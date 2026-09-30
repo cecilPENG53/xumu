@@ -1,0 +1,20 @@
+{
+  "name": "vvai",
+  "owner": {
+    "name": "VVAI",
+    "url": "https://github.com/cecilPENG53"
+  },
+  "metadata": {
+    "description": "VVAI 的视频制作 Agent 技能"
+  },
+  "plugins": [
+    {
+      "name": "vv-narrative-video",
+      "source": "./",
+      "description": "VV 口播成片助手：口播视频/录音/文案 → 解说成片。含 vv-narrative-video 总控、Video Use 剪辑 helper、Video Shotcraft 镜头卡库。",
+      "version": "0.4.2",
+      "license": "MIT",
+      "keywords": ["video", "editing", "remotion", "shotcraft", "口播"]
+    }
+  ]
+}

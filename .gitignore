@@ -1,0 +1,29 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Node
+node_modules/
+
+# Media outputs & user projects
+outputs/
+edit/
+*.mp4
+*.mov
+*.webm
+*.mp3
+*.wav
+*.m4a
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,792 @@
+{
+ "schema": "vv-mg-inspiration-index/1",
+ "source": {
+  "repo": "https://github.com/yihui-dev/awesome-opus5-5-videos",
+  "commit": "1c092195b7bda246455827bc0be820be6d6a7b97",
+  "snapshot_date": "2026-09-28",
+  "total_in_source": 282,
+  "curated": 32,
+  "license_note": "源仓库未附许可证；每条提示词与视频归原作者所有。本索引只存链接与自写中文摘要，不复制提示词原文。使用时只借鉴写法与手法，重新实现，不复制原片画面、文案或品牌元素。"
+ },
+ "use_tags": {
+  "hook": "开场注意点 / 短视频钩子",
+  "concept": "抽象概念解释",
+  "mechanism": "流程、机制、步骤",
+  "data": "数据、时间线、历史",
+  "kinetic_type": "金句 / 口播关键句字体动效",
+  "product_ui": "真实产品界面或真实素材展示",
+  "continuity": "连续镜头、一镜到底、章节转场",
+  "story": "角色叙事、插画、隐喻",
+  "space_3d": "三维空间或结构",
+  "brand_outro": "品牌落版、片尾",
+  "music_led": "仅限音乐主导且用户已选曲的项目"
+ },
+ "energy_levels": [
+  "克制",
+  "中等",
+  "强"
+ ],
+ "prompt_quality_levels": {
+  "完整规格": "含风格、分镜时码、技术约束与自检，可直接学习写法",
+  "结构模板": "给出叙事或规则骨架，细节需补",
+  "一句话": "主要价值在样片效果，提示词本身信息少"
+ },
+ "entries": [
+  {
+   "slug": "gdgtify-929495",
+   "author": "@Gdgtify",
+   "category": "motion",
+   "tech_tags": [
+    "canvas"
+   ],
+   "vv_uses": [
+    "kinetic_type",
+    "concept"
+   ],
+   "energy": "克制",
+   "prompt_quality": "完整规格",
+   "prompt_chars": 4373,
+   "prompt_partial": false,
+   "summary_zh": "20 秒金句字体片：每个关键词承担建筑角色（门楣、承重、开口、平台），句子按口播短语逐步搭出最终画面。",
+   "borrow_zh": "按短语/停顿/重音写 cue sheet 而非卡鼓点；关键词用真实字形变形并保持可读；至少一次 400ms 完全静止；seek(t) 确定性渲染；抽 8 帧自检阅读顺序。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/gdgtify-929495.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/gdgtify-929495.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/gdgtify-929495",
+   "post_url": "https://x.com/Gdgtify/status/2103458245213929495",
+   "caveats_zh": "英文衬线排版思路，中文需换字体并重排行宽。"
+  },
+  {
+   "slug": "parkerrex-701462",
+   "author": "@ParkerRex",
+   "category": "explainer",
+   "tech_tags": [
+    "canvas",
+    "physics"
+   ],
+   "vv_uses": [
+    "mechanism"
+   ],
+   "energy": "克制",
+   "prompt_quality": "一句话",
+   "prompt_chars": 133,
+   "prompt_partial": false,
+   "summary_zh": "用 Canvas 解释令牌桶限流，明确要求每帧是时间的纯函数以便逐帧截图。",
+   "borrow_zh": "机制图解最小写法：一个机制 + 纯 Canvas + 帧纯函数约束。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/parkerrex-701462.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/parkerrex-701462.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/parkerrex-701462",
+   "post_url": "https://x.com/ParkerRex/status/2103206747846701462",
+   "caveats_zh": "提示词很短，效果依赖模型发挥；只借约束写法。"
+  },
+  {
+   "slug": "verbove-268381",
+   "author": "@verbove",
+   "category": "explainer",
+   "tech_tags": [
+    "canvas"
+   ],
+   "vv_uses": [
+    "product_ui"
+   ],
+   "energy": "中等",
+   "prompt_quality": "结构模板",
+   "prompt_chars": 1624,
+   "prompt_partial": false,
+   "summary_zh": "产品 UI 故事片模板：单一形状不断形变成各个界面状态，光标驱动点击/输入/拖拽，真实数据。",
+   "borrow_zh": "draw(t) + 无计时器无跨帧状态；闭式弹簧、多目标时逐次叠加；容器先变形、内容后入场；先按拍导出联系表检查再全量渲染；6 子帧运动模糊。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/verbove-268381.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/verbove-268381.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/verbove-268381",
+   "post_url": "https://x.com/verbove/status/2103483957266268381",
+   "caveats_zh": "120 BPM 每拍一动适合音乐主导宣传片；口播片只借形变与渲染契约，节奏改为跟随语义词。同类变体：morse-369333、annacher-433425。"
+  },
+  {
+   "slug": "astrothewizard-618782",
+   "author": "@AstroTheWizard",
+   "category": "explainer",
+   "tech_tags": [
+    "canvas"
+   ],
+   "vv_uses": [
+    "concept",
+    "data",
+    "story"
+   ],
+   "energy": "中等",
+   "prompt_quality": "完整规格",
+   "prompt_chars": 2470,
+   "prompt_partial": false,
+   "summary_zh": "60 秒科普解说：光子从太阳核心到地球的旅程，童话风拟人角色 + 真实数值 + 旁白字幕配乐。",
+   "borrow_zh": "能模拟就别画示意（随机游走真的随机游走）；写真实数字并标注不确定性；每场景一个强形式概念；逐场景出静帧自审、逐帧查转场、数值测混音。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/astrothewizard-618782.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/astrothewizard-618782.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/astrothewizard-618782",
+   "post_url": "https://x.com/AstroTheWizard/status/2103629247751618782",
+   "caveats_zh": "包含自写旁白与 TTS；在 vv 中旁白由输入模式决定，不能借此替换用户原声。"
+  },
+  {
+   "slug": "alex-prompter-997524",
+   "author": "@alex_prompter",
+   "category": "explainer",
+   "tech_tags": [
+    "svg",
+    "gsap"
+   ],
+   "vv_uses": [
+    "concept",
+    "product_ui",
+    "brand_outro"
+   ],
+   "energy": "中等",
+   "prompt_quality": "结构模板",
+   "prompt_chars": 348,
+   "prompt_partial": false,
+   "summary_zh": "30 秒商业解说五段式：客户问题 → 我做什么 → 三步怎么做 → 一个证据 → 名字落版。",
+   "borrow_zh": "方案/产品类口播的最小叙事骨架，可直接映射到段落目标表。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/alex-prompter-997524.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/alex-prompter-997524.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/alex-prompter-997524",
+   "post_url": "https://x.com/alex_prompter/status/2103499977632997524",
+   "caveats_zh": "骨架而非视觉方案；证据必须来自用户真实材料。"
+  },
+  {
+   "slug": "tak3sh8-441895",
+   "author": "@tak3sh8",
+   "category": "explainer",
+   "tech_tags": [
+    "canvas",
+    "audio"
+   ],
+   "vv_uses": [
+    "concept"
+   ],
+   "energy": "克制",
+   "prompt_quality": "一句话",
+   "prompt_chars": 152,
+   "prompt_partial": false,
+   "summary_zh": "手绘白板动画解释 SK 模型的复本对称破缺，第二步加旁白出 MP4。",
+   "borrow_zh": "硬核概念用手绘白板风降低门槛；先出无声版确认画面，再合成旁白。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/tak3sh8-441895.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/tak3sh8-441895.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/tak3sh8-441895",
+   "post_url": "https://x.com/tak3sh8/status/2103667481139441895",
+   "caveats_zh": "科学准确性需另行核对。"
+  },
+  {
+   "slug": "linearuncle-971663",
+   "author": "@LinearUncle",
+   "category": "explainer",
+   "tech_tags": [
+    "svg",
+    "audio"
+   ],
+   "vv_uses": [
+    "concept"
+   ],
+   "energy": "克制",
+   "prompt_quality": "一句话",
+   "prompt_chars": 53,
+   "prompt_partial": false,
+   "summary_zh": "中文提示：用 Manim 做导数概念教学视频，通俗、有例子、引人思考，edge-tts 配音。",
+   "borrow_zh": "数学/推导类内容可走 Manim；'有例子、引人思考'是教学片的有效目标写法。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/linearuncle-971663.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/linearuncle-971663.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/linearuncle-971663",
+   "post_url": "https://x.com/LinearUncle/status/2103128559174971663",
+   "caveats_zh": "vv 中 Manim 仅在确有必要时引入；配音须按输入模式授权。"
+  },
+  {
+   "slug": "emollick-019567",
+   "author": "@emollick",
+   "category": "explainer",
+   "tech_tags": [
+    "canvas"
+   ],
+   "vv_uses": [
+    "concept",
+    "hook"
+   ],
+   "energy": "强",
+   "prompt_quality": "一句话",
+   "prompt_chars": 159,
+   "prompt_partial": false,
+   "summary_zh": "解释递归：每一层解释换一种截然不同的视频风格，自指且快节奏。",
+   "borrow_zh": "用'形式即内容'的元结构解释抽象概念，适合作章节开场的记忆点。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/emollick-019567.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/emollick-019567.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/emollick-019567",
+   "post_url": "https://x.com/emollick/status/2103688362960019567",
+   "caveats_zh": "风格频繁切换，长片慎用，避免破坏全片视觉统一。"
+  },
+  {
+   "slug": "sarut0bisasuke-069973",
+   "author": "@Sarut0biSasuke",
+   "category": "explainer",
+   "tech_tags": [
+    "canvas"
+   ],
+   "vv_uses": [
+    "mechanism"
+   ],
+   "energy": "中等",
+   "prompt_quality": "结构模板",
+   "prompt_chars": 333,
+   "prompt_partial": false,
+   "summary_zh": "30 秒配方动画：从空杯到成品，配料与用量随倒入依次出现。",
+   "borrow_zh": "步骤型教程的'容器逐步填满'写法：每步一个实体变化 + 精确数字标注。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/sarut0bisasuke-069973.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/sarut0bisasuke-069973.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/sarut0bisasuke-069973",
+   "post_url": "https://x.com/Sarut0biSasuke/status/2103418429248069973",
+   "caveats_zh": "同题变体 ror-fly-880547。"
+  },
+  {
+   "slug": "retropunkai-277590",
+   "author": "@RetropunkAI",
+   "category": "explainer",
+   "tech_tags": [
+    "canvas",
+    "svg",
+    "gsap",
+    "ai-image"
+   ],
+   "vv_uses": [
+    "data",
+    "story"
+   ],
+   "energy": "中等",
+   "prompt_quality": "结构模板",
+   "prompt_chars": 701,
+   "prompt_partial": false,
+   "summary_zh": "30–60 秒历史解说：拉斯维加斯 Sphere 从极简建筑到完工再到演出，使用文件夹里的图片与维基资料。",
+   "borrow_zh": "'从雏形到完成'的建造式时间线；给定资料来源与本地素材文件夹。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/retropunkai-277590.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/retropunkai-277590.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/retropunkai-277590",
+   "post_url": "https://x.com/RetropunkAI/status/2103237989065277590",
+   "caveats_zh": "含特定品牌/场馆与第三方影视内容，只借结构。"
+  },
+  {
+   "slug": "groundcontrol-230877",
+   "author": "@GroundControl",
+   "category": "motion",
+   "tech_tags": [
+    "canvas",
+    "audio"
+   ],
+   "vv_uses": [
+    "data",
+    "story"
+   ],
+   "energy": "中等",
+   "prompt_quality": "结构模板",
+   "prompt_chars": 589,
+   "prompt_partial": false,
+   "summary_zh": "3 分钟数据可视化：2026 日本高温，联网取数与往年比较，铅笔手绘 + 轻微色差，JS 合成配乐。",
+   "borrow_zh": "真实数据驱动的长篇可视化；给出明确质感关键词（铅笔、色差、拼贴）。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/groundcontrol-230877.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/groundcontrol-230877.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/groundcontrol-230877",
+   "post_url": "https://x.com/GroundControl/status/2103678647777230877",
+   "caveats_zh": "数据须在项目中登记来源与日期。"
+  },
+  {
+   "slug": "michaelzsguo-782312",
+   "author": "@Michaelzsguo",
+   "category": "3d",
+   "tech_tags": [
+    "shader",
+    "canvas"
+   ],
+   "vv_uses": [
+    "story",
+    "data",
+    "continuity"
+   ],
+   "energy": "中等",
+   "prompt_quality": "一句话",
+   "prompt_chars": 172,
+   "prompt_partial": false,
+   "summary_zh": "2 分钟沙画动画讲述美国 250 年历史，配乐与音效。",
+   "borrow_zh": "沙画'抹去即转场'天然适合章节式长片的连续叙事。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/michaelzsguo-782312.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/michaelzsguo-782312.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/michaelzsguo-782312",
+   "post_url": "https://x.com/Michaelzsguo/status/2102592355165782312",
+   "caveats_zh": "只有一句话提示，效果需看样片。"
+  },
+  {
+   "slug": "songkeys-384673",
+   "author": "@songkeys",
+   "category": "motion",
+   "tech_tags": [
+    "canvas"
+   ],
+   "vv_uses": [
+    "story"
+   ],
+   "energy": "克制",
+   "prompt_quality": "结构模板",
+   "prompt_chars": 489,
+   "prompt_partial": false,
+   "summary_zh": "折纸/涂鸦风讲人类文明到 AI 诞生，温暖、诗意、几乎无文字，跨语言可懂。",
+   "borrow_zh": "'少文字、靠画面讲'的写法与风格词组合（doodly、cute、warm、poetic）。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/songkeys-384673.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/songkeys-384673.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/songkeys-384673",
+   "post_url": "https://x.com/songkeys/status/2102743212922384673",
+   "caveats_zh": "拟人叙事属隐喻，不能当事实证据。"
+  },
+  {
+   "slug": "loicrambo-980558",
+   "author": "@loicRambo",
+   "category": "motion",
+   "tech_tags": [
+    "canvas"
+   ],
+   "vv_uses": [
+    "story",
+    "continuity"
+   ],
+   "energy": "中等",
+   "prompt_quality": "结构模板",
+   "prompt_chars": 402,
+   "prompt_partial": false,
+   "summary_zh": "20 秒人生循环：同一个人从童年到老去，结尾可无缝循环回开头。",
+   "borrow_zh": "同一角色贯穿多阶段 + 首尾相接，适合观点/故事类口播的情绪段。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/loicrambo-980558.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/loicrambo-980558.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/loicrambo-980558",
+   "post_url": "https://x.com/loicRambo/status/2103428454355980558"
+  },
+  {
+   "slug": "tomandrieu96707-875264",
+   "author": "@TomAndrieu96707",
+   "category": "explainer",
+   "tech_tags": [
+    "canvas",
+    "svg",
+    "gsap"
+   ],
+   "vv_uses": [
+    "story",
+    "brand_outro"
+   ],
+   "energy": "中等",
+   "prompt_quality": "一句话",
+   "prompt_chars": 198,
+   "prompt_partial": false,
+   "summary_zh": "30–60 秒手绘拼贴风，讲'关于我们'页面的同一个故事，优先使用仓库内素材。",
+   "borrow_zh": "品牌故事从已有文案出发、优先用已有素材，与 vv 文案模式一致。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/tomandrieu96707-875264.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/tomandrieu96707-875264.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/tomandrieu96707-875264",
+   "post_url": "https://x.com/TomAndrieu96707/status/2103411144899875264"
+  },
+  {
+   "slug": "nikolajankovic-616097",
+   "author": "@_nikolajankovic",
+   "category": "explainer",
+   "tech_tags": [
+    "canvas"
+   ],
+   "vv_uses": [
+    "story"
+   ],
+   "energy": "中等",
+   "prompt_quality": "一句话",
+   "prompt_chars": 103,
+   "prompt_partial": false,
+   "summary_zh": "手绘定格动画，产品以第一人称自我介绍。",
+   "borrow_zh": "第一人称拟人化是产品/工具类口播的轻量叙事手法。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/nikolajankovic-616097.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/nikolajankovic-616097.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/nikolajankovic-616097",
+   "post_url": "https://x.com/_nikolajankovic/status/2102867033100616097",
+   "caveats_zh": "定格效果需逐帧抖动线条，注意固定随机种子。"
+  },
+  {
+   "slug": "eric-khun-667455",
+   "author": "@eric_khun",
+   "category": "motion",
+   "tech_tags": [
+    "canvas"
+   ],
+   "vv_uses": [
+    "story",
+    "hook"
+   ],
+   "energy": "强",
+   "prompt_quality": "完整规格",
+   "prompt_chars": 1137,
+   "prompt_partial": false,
+   "summary_zh": "中秋祝福片：台湾黑熊为主角的手绘动画，要求保持角色特征一致，并调研本地过节习俗入片。",
+   "borrow_zh": "角色一致性写成可检查的特征清单；本地文化细节先调研再入画，与 vv 本地化要求一致。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/eric-khun-667455.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/eric-khun-667455.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/eric-khun-667455",
+   "post_url": "https://x.com/eric_khun/status/2103112385380667455",
+   "caveats_zh": "使用用户提供的角色图；节日与地区内容需核实。"
+  },
+  {
+   "slug": "koldo2k-778767",
+   "author": "@koldo2k",
+   "category": "explainer",
+   "tech_tags": [
+    "canvas",
+    "ai-image"
+   ],
+   "vv_uses": [
+    "continuity",
+    "hook"
+   ],
+   "energy": "中等",
+   "prompt_quality": "完整规格",
+   "prompt_chars": 1663,
+   "prompt_partial": false,
+   "summary_zh": "复古拼贴无限变焦：镜头穿过怀表、镜头、放大镜等物件在不同风景间循环飞行。",
+   "borrow_zh": "'穿过物体进入下一场景'的连续转场语法，清楚列出世界顺序与贯穿元素。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/koldo2k-778767.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/koldo2k-778767.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/koldo2k-778767",
+   "post_url": "https://x.com/koldo2k/status/2103129343253778767",
+   "caveats_zh": "素材依赖图像生成服务；vv 中需另行确认外部生成权限与费用。"
+  },
+  {
+   "slug": "twoclipping-496100",
+   "author": "@twoclipping",
+   "category": "3d",
+   "tech_tags": [
+    "canvas"
+   ],
+   "vv_uses": [
+    "continuity",
+    "product_ui"
+   ],
+   "energy": "中等",
+   "prompt_quality": "完整规格",
+   "prompt_chars": 5222,
+   "prompt_partial": false,
+   "summary_zh": "苹果发布会式一镜到底：每个场景由上一个场景的物体变形而来，无淡入淡出与硬切。",
+   "borrow_zh": "'下一场由上一场长出来'的连续性规则；禁用清单（交叉淡化、模糊入、3D 翻转、粒子、光晕）；液态玻璃与 goo 的实现细节；seek(t) + 闭式弹簧叠加。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/twoclipping-496100.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/twoclipping-496100.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/twoclipping-496100",
+   "post_url": "https://x.com/twoclipping/status/2103835273813496100",
+   "caveats_zh": "每拍一动为音乐主导；口播片只借连续性与禁用清单。"
+  },
+  {
+   "slug": "twoclipping-000267",
+   "author": "@twoclipping",
+   "category": "3d",
+   "tech_tags": [
+    "svg",
+    "css"
+   ],
+   "vv_uses": [
+    "product_ui",
+    "brand_outro"
+   ],
+   "energy": "克制",
+   "prompt_quality": "完整规格",
+   "prompt_chars": 2515,
+   "prompt_partial": false,
+   "summary_zh": "高端极简宣传片模板：一镜一想法、大量留白、单一强调色、遮罩字、匹配剪辑，只用真实素材。",
+   "borrow_zh": "明确禁用清单（冲击波、粒子、RGB 分离、抖动、光晕、网格地面、闪烁背景、弹跳缓动）；按测得峰值而非文件起点对齐音效；全量渲染前抽 20+ 帧检查。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/twoclipping-000267.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/twoclipping-000267.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/twoclipping-000267",
+   "post_url": "https://x.com/twoclipping/status/2102554209166000267",
+   "caveats_zh": "同文变体 raphaelaubryy-687877。"
+  },
+  {
+   "slug": "wani-shola-459278",
+   "author": "@wani_shola",
+   "category": "motion",
+   "tech_tags": [
+    "svg",
+    "gsap"
+   ],
+   "vv_uses": [
+    "product_ui"
+   ],
+   "energy": "中等",
+   "prompt_quality": "结构模板",
+   "prompt_chars": 1007,
+   "prompt_partial": false,
+   "summary_zh": "用 Remotion 为个人网站做作品集短片：截取真实页面放进浏览器/手机框，只用站内事实与数字。",
+   "borrow_zh": "'三色 + 站点自身字体、一镜一想法、主体居中、留呼吸'的品牌规则；只用真实页面与事实。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/wani-shola-459278.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/wani-shola-459278.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/wani-shola-459278",
+   "post_url": "https://x.com/wani_shola/status/2103769906638459278",
+   "caveats_zh": "按拍切镜适用于音乐主导版本。"
+  },
+  {
+   "slug": "bilimfili1-459762",
+   "author": "@Bilimfili1",
+   "category": "interactive",
+   "tech_tags": [
+    "canvas",
+    "svg"
+   ],
+   "vv_uses": [
+    "product_ui",
+    "hook"
+   ],
+   "energy": "强",
+   "prompt_quality": "结构模板",
+   "prompt_chars": 701,
+   "prompt_partial": false,
+   "summary_zh": "45–50 秒竖屏 App 功能片：在模拟器里真实录制每个功能，再让功能'冲出手机'改变周围世界。",
+   "borrow_zh": "'画面上每个数字和标签都来自录屏'；文字避开 TikTok/Instagram 界面；每个功能至少停留 2.5 秒。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/bilimfili1-459762.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/bilimfili1-459762.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/bilimfili1-459762",
+   "post_url": "https://x.com/Bilimfili1/status/2103743617848459762",
+   "caveats_zh": "平台安全区数值需按当前官方规格核对。"
+  },
+  {
+   "slug": "jake11moran-414633",
+   "author": "@jake11moran",
+   "category": "motion",
+   "tech_tags": [
+    "canvas",
+    "svg",
+    "gsap",
+    "ai-image"
+   ],
+   "vv_uses": [
+    "product_ui",
+    "continuity"
+   ],
+   "energy": "克制",
+   "prompt_quality": "完整规格",
+   "prompt_chars": 1959,
+   "prompt_partial": false,
+   "summary_zh": "27 秒产品预告：一台 Mac 桌面上的一个连续镜头，推拉摇 1.5–3 秒缓入缓出，'比默认慢一半'。",
+   "borrow_zh": "给运镜写具体时长与速度倍率；快速移动加运动模糊、轻胶片颗粒；全小写文案与原帖一致。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/jake11moran-414633.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/jake11moran-414633.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/jake11moran-414633",
+   "post_url": "https://x.com/jake11moran/status/2103237884564414633",
+   "caveats_zh": "原作使用 HyperFrames 组件，vv 默认用 Remotion 实现同等运动。"
+  },
+  {
+   "slug": "dale-vaz-879074",
+   "author": "@dale_vaz",
+   "category": "motion",
+   "tech_tags": [
+    "canvas"
+   ],
+   "vv_uses": [
+    "product_ui",
+    "hook",
+    "continuity"
+   ],
+   "energy": "强",
+   "prompt_quality": "结构模板",
+   "prompt_chars": 636,
+   "prompt_partial": false,
+   "summary_zh": "交易终端片：黑屏一点 → 多窗口出现 → 多尺度推拉 → 桌面缩成宇宙一点 → 再推进到横屏手机。",
+   "borrow_zh": "'点 → 界面 → 缩成点 → 换设备'的尺度跳跃开场结构。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/dale-vaz-879074.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/dale-vaz-879074.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/dale-vaz-879074",
+   "post_url": "https://x.com/dale_vaz/status/2103290592679879074",
+   "caveats_zh": "界面须用真实截图，不能合成假数据冒充。"
+  },
+  {
+   "slug": "howdevelop-733090",
+   "author": "@HowDevelop",
+   "category": "motion",
+   "tech_tags": [
+    "canvas"
+   ],
+   "vv_uses": [
+    "product_ui",
+    "mechanism",
+    "hook"
+   ],
+   "energy": "强",
+   "prompt_quality": "完整规格",
+   "prompt_chars": 5464,
+   "prompt_partial": false,
+   "summary_zh": "15 秒开发者工具发布片：给定功能事实作为唯一依据，逐段写到 0.5 秒精度的分镜与屏幕文案。",
+   "borrow_zh": "'每个转场本身演示一个功能，而不是换一张标题卡'；关键内容留在 9:16 安全区；静音也能看懂；避免假仪表盘与看不清的小代码。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/howdevelop-733090.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/howdevelop-733090.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/howdevelop-733090",
+   "post_url": "https://x.com/HowDevelop/status/2103840883812733090"
+  },
+  {
+   "slug": "techhalla-498547",
+   "author": "@techhalla",
+   "category": "motion",
+   "tech_tags": [
+    "canvas"
+   ],
+   "vv_uses": [
+    "kinetic_type",
+    "brand_outro",
+    "hook"
+   ],
+   "energy": "强",
+   "prompt_quality": "完整规格",
+   "prompt_chars": 3878,
+   "prompt_partial": false,
+   "summary_zh": "20 秒字体身份片：锁定六句文案、严格三色与三级字体系统、按秒分段叙事弧、可循环。",
+   "borrow_zh": "锁定文案不许加口号；色板与字体系统写死；带种子的逐字打乱；轮廓遮罩转场；先按拍出 8 张静帧修正再渲染；详细禁用清单。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/techhalla-498547.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/techhalla-498547.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/techhalla-498547",
+   "post_url": "https://x.com/techhalla/status/2103411244468498547",
+   "caveats_zh": "强度很高，只适合短视频开场或片尾落版。"
+  },
+  {
+   "slug": "sayan-shanky-868515",
+   "author": "@Sayan_shanky",
+   "category": "3d",
+   "tech_tags": [
+    "threejs",
+    "shader",
+    "canvas",
+    "svg"
+   ],
+   "vv_uses": [
+    "space_3d",
+    "concept"
+   ],
+   "energy": "强",
+   "prompt_quality": "一句话",
+   "prompt_chars": 46,
+   "prompt_partial": false,
+   "summary_zh": "'给我看 AI 数据中心内部发生了什么'的三维讲解。",
+   "borrow_zh": "空间结构类概念用 3D 穿行比平面图更直观。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/sayan-shanky-868515.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/sayan-shanky-868515.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/sayan-shanky-868515",
+   "post_url": "https://x.com/Sayan_shanky/status/2103736579449868515",
+   "caveats_zh": "同题变体 mdaman010-111079；3D 需确认渲染成本。"
+  },
+  {
+   "slug": "anirockshady-032809",
+   "author": "@anirockshady",
+   "category": "3d",
+   "tech_tags": [
+    "threejs",
+    "shader",
+    "svg"
+   ],
+   "vv_uses": [
+    "space_3d",
+    "concept"
+   ],
+   "energy": "中等",
+   "prompt_quality": "结构模板",
+   "prompt_chars": 278,
+   "prompt_partial": false,
+   "summary_zh": "3D 小球沿曲面从波峰滚到波谷解释梯度下降，并列出算法类型与应用，指定火山橙/青/灰渐变配色。",
+   "borrow_zh": "抽象算法具象成物理隐喻；配色直接写色名。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/anirockshady-032809.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/anirockshady-032809.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/anirockshady-032809",
+   "post_url": "https://x.com/anirockshady/status/2103195903012032809",
+   "caveats_zh": "英文原文较粗糙，仅借构思。"
+  },
+  {
+   "slug": "alexalbert-274839",
+   "author": "@alexalbert__",
+   "category": "3d",
+   "tech_tags": [
+    "threejs",
+    "shader",
+    "canvas"
+   ],
+   "vv_uses": [
+    "space_3d",
+    "data"
+   ],
+   "energy": "克制",
+   "prompt_quality": "完整规格",
+   "prompt_chars": 1120,
+   "prompt_partial": false,
+   "summary_zh": "在 Blender 中复原 1906 年地震前的旧金山市场街：先建资料表，每栋建筑记录来源再建模。",
+   "borrow_zh": "历史/空间再现的证据纪律：先列资料、逐项注明出处，与 vv 的'再现要标明'一致。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/alexalbert-274839.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/alexalbert-274839.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/alexalbert-274839",
+   "post_url": "https://x.com/alexalbert__/status/2102466523164274839",
+   "caveats_zh": "需要 Blender 与大量调研，属于重型路线。"
+  },
+  {
+   "slug": "pound75423-464968",
+   "author": "@pound75423",
+   "category": "motion",
+   "tech_tags": [
+    "canvas",
+    "css"
+   ],
+   "vv_uses": [
+    "music_led"
+   ],
+   "energy": "强",
+   "prompt_quality": "完整规格",
+   "prompt_chars": 1094,
+   "prompt_partial": false,
+   "summary_zh": "日文 MV 提示：Canvas 动画 + Playwright 逐帧截图 + ffmpeg 合成音频，按 BPM 与段落能量切镜。",
+   "borrow_zh": "逐帧截图出片的完整管线；按段落能量设效果强度（前奏 40%、主歌 70%、副歌 100%）；低能量处给画面喘息。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/pound75423-464968.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/pound75423-464968.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/pound75423-464968",
+   "post_url": "https://x.com/pound75423/status/2103722556918464968",
+   "caveats_zh": "仅音乐主导项目使用；闪白与 RGB 撕裂不适合讲解段落。"
+  },
+  {
+   "slug": "doubleunplussed-181894",
+   "author": "@doubleunplussed",
+   "category": "motion",
+   "tech_tags": [
+    "canvas"
+   ],
+   "vv_uses": [
+    "story",
+    "concept",
+    "music_led"
+   ],
+   "energy": "中等",
+   "prompt_quality": "结构模板",
+   "prompt_chars": 2208,
+   "prompt_partial": false,
+   "summary_zh": "按歌曲做 MV：不逐字图解歌词，而是用相关概念、典故和圈内梗做视觉隐喻。",
+   "borrow_zh": "观点类口播的'隐喻映射'思路：给关键词找视觉对应物而不是字面画出来。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/doubleunplussed-181894.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/doubleunplussed-181894.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/doubleunplussed-181894",
+   "post_url": "https://x.com/doubleunplussed/status/2103697580421181894",
+   "caveats_zh": "隐喻须在 shot-selection 中记录映射，不当事实。"
+  },
+  {
+   "slug": "ajith-io-890146",
+   "author": "@ajith_io",
+   "category": "motion",
+   "tech_tags": [
+    "canvas"
+   ],
+   "vv_uses": [
+    "hook"
+   ],
+   "energy": "强",
+   "prompt_quality": "一句话",
+   "prompt_chars": 151,
+   "prompt_partial": false,
+   "summary_zh": "最常见的'15 秒动效设计师作品集，全力发挥'提示，仓库中有 50 多条几乎相同的变体。",
+   "borrow_zh": "只作为'强度上限'参考：看模型在无约束时会用哪些手法。",
+   "prompt_url": "https://github.com/yihui-dev/awesome-opus5-5-videos/blob/main/prompts/ajith-io-890146.md",
+   "raw_prompt_url": "https://raw.githubusercontent.com/yihui-dev/awesome-opus5-5-videos/main/prompts/ajith-io-890146.md",
+   "preview_url": "https://skillry.dev/ai-videos/opus-5-5/ajith-io-890146",
+   "post_url": "https://x.com/ajith_io/status/2103449416325890146",
+   "caveats_zh": "不给内容目标，不适合直接用于口播；vv 中最多用于开场钩子的强度对照。"
+  }
+ ]
+}
