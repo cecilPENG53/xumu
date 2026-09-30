@@ -1,5 +1,5 @@
 ---
-name: vv-narrative-video
+name: xumu
 description: 序幕（口播成片助手）：将口播视频、录音或文案制作成解说视频。先判断平台、内容、风格与时长，再剪辑、从 Video Shotcraft 选镜头并按需定制 MG；支持短篇与章节式长视频规划。用于成片、镜头设计或动态包装；单纯转录、润色或选题研究无需完整制作。
 metadata:
   version: "0.4.2"

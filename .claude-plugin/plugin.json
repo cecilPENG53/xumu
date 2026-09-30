@@ -1,13 +1,13 @@
 {
-  "name": "vv-narrative-video",
+  "name": "xumu",
   "version": "0.4.2",
-  "description": "序幕（口播成片助手）：口播视频/录音/文案 → 解说成片。含 vv-narrative-video 总控、Video Use 剪辑 helper、Video Shotcraft 镜头卡库；含定制 MG 灵感索引、确定性渲染契约，可按需调用已安装的 HyperFrames。",
+  "description": "序幕（口播成片助手）：口播视频/录音/文案 → 解说成片。含 xumu 总控、Video Use 剪辑 helper、Video Shotcraft 镜头卡库；含定制 MG 灵感索引、确定性渲染契约，可按需调用已安装的 HyperFrames。",
   "author": {
     "name": "VVAI",
     "url": "https://github.com/cecilPENG53"
   },
-  "homepage": "https://github.com/cecilPENG53/vv-narrative-video",
-  "repository": "https://github.com/cecilPENG53/vv-narrative-video",
+  "homepage": "https://github.com/cecilPENG53/xumu",
+  "repository": "https://github.com/cecilPENG53/xumu",
   "license": "MIT",
   "keywords": [
     "video",

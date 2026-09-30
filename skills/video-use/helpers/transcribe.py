@@ -58,7 +58,7 @@ def call_local(audio_path: Path, language: str | None = None) -> dict:
         from faster_whisper import WhisperModel
     except ImportError:
         sys.exit("No ELEVENLABS_API_KEY and faster-whisper is not installed. "
-                 "Run vv-narrative-video/scripts/setup_env.py, or: pip install faster-whisper")
+                 "Run xumu/scripts/setup_env.py, or: pip install faster-whisper")
     model_name = os.environ.get("VV_WHISPER_MODEL", "small")
     model = WhisperModel(model_name, device="auto", compute_type="auto")
     segments, info = model.transcribe(

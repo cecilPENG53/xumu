@@ -2,7 +2,7 @@
 
 ## 跨电脑发现
 
-本 Skill 随分发包提供 `video-use` 与 `video-shotcraft` 源码。安装后，它们应与 `vv-narrative-video` 位于同一个 Codex `skills/` 目录。优先使用当前会话已加载的同名 Skill；需要读取源码时，从本文件向上定位 `vv-narrative-video/`，再到相邻的 `video-use/`、`video-shotcraft/`。用户明确指定的其他安装位置优先。不得猜测 `C:` 盘、作者用户名或插件缓存路径。
+本 Skill 随分发包提供 `video-use` 与 `video-shotcraft` 源码。安装后，它们应与 `xumu` 位于同一个 Codex `skills/` 目录。优先使用当前会话已加载的同名 Skill；需要读取源码时，从本文件向上定位 `xumu/`，再到相邻的 `video-use/`、`video-shotcraft/`。用户明确指定的其他安装位置优先。不得猜测 `C:` 盘、作者用户名或插件缓存路径。
 
 - **Video Use**：读取相邻 `video-use/SKILL.md` 与任务相关的 helper。剪辑和转录前运行 `../scripts/setup_env.py` 自动安装 Python 依赖、FFmpeg/ffprobe 与 faster-whisper。若安装器创建了 `video-use/.venv`，调用对应平台的 Python 解释器运行 helper；否则验证当前 Python 环境。转录默认按引擎自动选择：设置了 `ELEVENLABS_API_KEY` 用 ElevenLabs Scribe（带说话人区分与音频事件），否则自动改用本地免费的 faster-whisper（单说话人，词级时间戳，输出格式兼容；`VV_WHISPER_MODEL=medium` 或 `large-v3` 可提高中文准确率）。不因缺少密钥阻塞制作；多人对话需区分说话人时再向用户建议 Scribe。只检查变量是否存在，不输出密钥或整份 `.env`。
 - **Video Shotcraft**：读取相邻 `video-shotcraft/SKILL.md`、`references/shots/`、`gallery/api/library.json` 及选定的准确 demo。分发包包含卡片和实现源码，但不包含 Mixkit 第三方音频；需要声音时使用接收方自己已获授权的素材。本地动态 MP4 样片也可能缺席，应按 [导演接入](shotcraft-direction.md) 核对在线样片或自行做短测，不能冒称已看过。

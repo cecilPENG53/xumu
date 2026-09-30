@@ -1,6 +1,6 @@
 # 序幕
 
-![GitHub stars](https://img.shields.io/github/stars/cecilPENG53/vv-narrative-video?style=flat-square)
+![GitHub stars](https://img.shields.io/github/stars/cecilPENG53/xumu?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
 ![Version](https://img.shields.io/badge/version-0.4.2-orange?style=flat-square)
 ![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
@@ -39,15 +39,15 @@ flowchart LR
 **Claude Code（推荐，作为插件安装，三个 skill 一次装齐）：**
 
 ```text
-/plugin marketplace add cecilPENG53/vv-narrative-video
-/plugin install vv-narrative-video@vvai
+/plugin marketplace add cecilPENG53/xumu
+/plugin install xumu@vvai
 ```
 
 也可以直接把这段话发给有 shell 权限的 AI Agent：
 
 ```text
-帮我安装 vv-narrative-video 技能包。请把 https://github.com/cecilPENG53/vv-narrative-video 克隆到临时目录，
-再把其中 skills/ 下的 vv-narrative-video、video-use、video-shotcraft 三个文件夹一起复制到 ~/.claude/skills/，
+帮我安装 xumu 技能包。请把 https://github.com/cecilPENG53/xumu 克隆到临时目录，
+再把其中 skills/ 下的 xumu、video-use、video-shotcraft 三个文件夹一起复制到 ~/.claude/skills/，
 安装完成后检查三个文件夹里都有 SKILL.md。
 ```
 
@@ -72,11 +72,11 @@ flowchart LR
 
 | Skill | 调用名（Claude Code 插件） | 作用 |
 |---|---|---|
-| 🎛 **vv-narrative-video** | `/vv-narrative-video:vv-narrative-video` | **总控入口**：制作定位、剪辑策略、选镜头、主时间线、验收与交付 |
-| ✂️ **video-use** | `/vv-narrative-video:video-use` | 剪辑工具：转录、剪切、调色、字幕烧录（基于 browser-use/video-use） |
-| 🎞 **video-shotcraft** | `/vv-narrative-video:video-shotcraft` | 镜头库：157 张镜头配方卡、Remotion 组件与模板、动效工作台（基于 Vincentwei1021/video-shotcraft） |
+| 🎛 **xumu** | `/xumu:xumu` | **总控入口**：制作定位、剪辑策略、选镜头、主时间线、验收与交付 |
+| ✂️ **video-use** | `/xumu:video-use` | 剪辑工具：转录、剪切、调色、字幕烧录（基于 browser-use/video-use） |
+| 🎞 **video-shotcraft** | `/xumu:video-shotcraft` | 镜头库：157 张镜头配方卡、Remotion 组件与模板、动效工作台（基于 Vincentwei1021/video-shotcraft） |
 
-> 💡 **关于冒号**：`vv-narrative-video:vv-narrative-video` 中，冒号前是**插件名**，冒号后是**插件里的某个 skill**。在 Cowork 里界面会显示短名 `/vv-narrative-video`；以独立 skill 方式安装时，调用名就是 `/vv-narrative-video`。
+> 💡 **关于冒号**：`xumu:xumu` 中，冒号前是**插件名**，冒号后是**插件里的某个 skill**。在 Cowork 里界面会显示短名 `/xumu`；以独立 skill 方式安装时，调用名就是 `/xumu`。
 
 ## 效果
 
@@ -122,8 +122,8 @@ flowchart LR
 | 平台 | 状态 | 说明 |
 |------|------|------|
 | Claude Code | 支持 | 插件方式安装，三个 skill 一次装齐 |
-| Claude Cowork（桌面版） | 支持 | 通过插件市场添加本仓库，界面显示短名 `/vv-narrative-video` |
-| Codex | 支持 | 把三个 skill 复制到 `~/.codex/skills/`，用 `$vv-narrative-video` 触发 |
+| Claude Cowork（桌面版） | 支持 | 通过插件市场添加本仓库，界面显示短名 `/xumu` |
+| Codex | 支持 | 把三个 skill 复制到 `~/.codex/skills/`，用 `$xumu` 触发 |
 | Cursor / 其他本地 Agent | 可用 | 需要能读写文件、执行 shell 命令 |
 | 普通 Chatbot | 不推荐 | 没有文件系统和命令行，无法剪辑和渲染 |
 
@@ -132,8 +132,8 @@ flowchart LR
 ### 方式一：Claude Code 插件（推荐）
 
 ```text
-/plugin marketplace add cecilPENG53/vv-narrative-video
-/plugin install vv-narrative-video@vvai
+/plugin marketplace add cecilPENG53/xumu
+/plugin install xumu@vvai
 ```
 
 更新：
@@ -144,11 +144,11 @@ flowchart LR
 
 ### 方式二：把下面这段话直接发给 AI
 
-> 帮我安装 `vv-narrative-video` 技能包。请按下面步骤做：
+> 帮我安装 `xumu` 技能包。请按下面步骤做：
 >
 > 1. 确保 `~/.claude/skills/` 目录存在（不存在就创建）
-> 2. 执行 `git clone https://github.com/cecilPENG53/vv-narrative-video.git` 到一个临时目录
-> 3. 把其中 `skills/vv-narrative-video`、`skills/video-use`、`skills/video-shotcraft` **三个文件夹**都复制到 `~/.claude/skills/`
+> 2. 执行 `git clone https://github.com/cecilPENG53/xumu.git` 到一个临时目录
+> 3. 把其中 `skills/xumu`、`skills/video-use`、`skills/video-shotcraft` **三个文件夹**都复制到 `~/.claude/skills/`
 > 4. 验证三个文件夹里都有 `SKILL.md`
 > 5. 告诉我安装好了，之后我说「把这段口播做成视频」就会触发
 
@@ -157,15 +157,15 @@ flowchart LR
 macOS / Linux：
 
 ```bash
-git clone https://github.com/cecilPENG53/vv-narrative-video.git
-cp -r vv-narrative-video/skills/* ~/.claude/skills/
+git clone https://github.com/cecilPENG53/xumu.git
+cp -r xumu/skills/* ~/.claude/skills/
 ```
 
 Windows（PowerShell）：
 
 ```powershell
-git clone https://github.com/cecilPENG53/vv-narrative-video.git
-Copy-Item -Recurse vv-narrative-video\skills\* "$HOME\.claude\skills\"
+git clone https://github.com/cecilPENG53/xumu.git
+Copy-Item -Recurse xumu\skills\* "$HOME\.claude\skills\"
 ```
 
 Codex 用户把目标目录换成 `~/.codex/skills/`。
@@ -185,20 +185,20 @@ Codex 用户把目标目录换成 `~/.codex/skills/`。
 首次实际制作时 Agent 会自动运行环境检查；也可以手动：
 
 ```bash
-python skills/vv-narrative-video/scripts/setup_env.py --check   # 只报告，不安装
-python skills/vv-narrative-video/scripts/setup_env.py            # 缺什么装什么
-python skills/vv-narrative-video/scripts/setup_env.py --remotion # 需要 Remotion 动画时
+python skills/xumu/scripts/setup_env.py --check   # 只报告，不安装
+python skills/xumu/scripts/setup_env.py            # 缺什么装什么
+python skills/xumu/scripts/setup_env.py --remotion # 需要 Remotion 动画时
 ```
 
 ## 仓库结构
 
 ```text
-vv-narrative-video/
+xumu/
 ├── .claude-plugin/
 │   ├── plugin.json            # 插件清单
 │   └── marketplace.json       # 插件市场清单（/plugin marketplace add 用）
 ├── skills/
-│   ├── vv-narrative-video/    # 🎛 总控：SKILL.md + references/ + scripts/
+│   ├── xumu/                  # 🎛 总控：SKILL.md + references/ + scripts/
 │   ├── video-use/             # ✂️ 剪辑 helper（MIT，保留原许可证）
 │   └── video-shotcraft/       # 🎞 镜头卡库 + Remotion 源码（Apache-2.0，保留原许可证）
 ├── docs/USAGE.md              # 使用规范
@@ -222,7 +222,7 @@ vv-narrative-video/
 
 ## 许可证与致谢
 
-- VV 原创部分（`skills/vv-narrative-video/`、仓库根目录文档与配置）以 [MIT](./LICENSE) 开源。
+- VV 原创部分（`skills/xumu/`、仓库根目录文档与配置）以 [MIT](./LICENSE) 开源。
 - [`skills/video-use/`](./skills/video-use/) 来自 [browser-use/video-use](https://github.com/browser-use/video-use)，保留其 MIT 许可证。
 - [`skills/video-shotcraft/`](./skills/video-shotcraft/) 来自 [Vincentwei1021/video-shotcraft](https://github.com/Vincentwei1021/video-shotcraft)，保留其 Apache-2.0 许可证；原项目的 Mixkit 音效/音乐**未随本仓库分发**。
 - 详见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。

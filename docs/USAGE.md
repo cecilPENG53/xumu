@@ -2,7 +2,7 @@
 
 这份规范写给**使用者**：怎么下需求、Agent 会在哪里停下来问你、产物放在哪里、哪些事情需要你单独授权。照着做，能少走很多返工。
 
-> 技能内部的完整规则在 [`skills/vv-narrative-video/SKILL.md`](../skills/vv-narrative-video/SKILL.md) 和 `references/` 中，这里只讲你需要知道的部分。
+> 技能内部的完整规则在 [`skills/xumu/SKILL.md`](../skills/xumu/SKILL.md) 和 `references/` 中，这里只讲你需要知道的部分。
 
 ---
 
@@ -10,10 +10,10 @@
 
 | 环境 | 触发方式 |
 |---|---|
-| Claude Code（插件安装） | `/vv-narrative-video:vv-narrative-video <你的需求>`，或输入 `/vv` 从菜单中选择 |
-| Claude Cowork | `/vv-narrative-video <你的需求>` |
-| 独立 skill 安装（Claude Code） | `/vv-narrative-video <你的需求>` |
-| Codex | `$vv-narrative-video <你的需求>` |
+| Claude Code（插件安装） | `/xumu:xumu <你的需求>`，或输入 `/xumu` 从菜单中选择 |
+| Claude Cowork | `/xumu <你的需求>` |
+| 独立 skill 安装（Claude Code） | `/xumu <你的需求>` |
+| Codex | `$xumu <你的需求>` |
 | 任意环境 | 直接用自然语言说「用序幕……」，Agent 会自动调用 |
 
 **只提问不会开工**：如果你只是在问问题或讨论方案，它不会初始化项目、安装依赖或生成素材。要实际制作，请给出素材和目标。
@@ -138,19 +138,19 @@ $env:ELEVENLABS_API_KEY = "你的key"        # Windows PowerShell
 手动检查命令：
 
 ```bash
-python skills/vv-narrative-video/scripts/plan_tools.py check edit/visual-plan.json
-python skills/vv-narrative-video/scripts/plan_tools.py check edit/visual-plan.json --ready
-python skills/vv-narrative-video/scripts/plan_tools.py export edit/visual-plan.json --out edit/render-manifest.json
+python skills/xumu/scripts/plan_tools.py check edit/visual-plan.json
+python skills/xumu/scripts/plan_tools.py check edit/visual-plan.json --ready
+python skills/xumu/scripts/plan_tools.py export edit/visual-plan.json --out edit/render-manifest.json
 ```
 
 ---
 
 ## 8. 常见问题
 
-**Q：为什么我打 `/vv-narrative-video` 找不到？**
-A：Claude Code 插件安装时，调用名要带插件前缀：`/vv-narrative-video:vv-narrative-video`。冒号前是插件名，冒号后是 skill 名。输入 `/vv` 会弹出补全菜单。
+**Q：为什么我打 `/xumu` 找不到？**
+A：Claude Code 插件安装时，调用名要带插件前缀：`/xumu:xumu`。冒号前是插件名，冒号后是 skill 名。输入 `/xumu` 会弹出补全菜单。
 
-**Q：只装了 vv-narrative-video 一个文件夹可以吗？**
+**Q：只装了 xumu 一个文件夹可以吗？**
 A：不行。三个 skill 必须在同一个 `skills/` 目录，总控靠同级目录找到 video-use 和 video-shotcraft。
 
 **Q：它会调用 HyperFrames 吗？**

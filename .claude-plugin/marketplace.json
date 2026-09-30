@@ -9,9 +9,9 @@
   },
   "plugins": [
     {
-      "name": "vv-narrative-video",
+      "name": "xumu",
       "source": "./",
-      "description": "序幕（口播成片助手）：口播视频/录音/文案 → 解说成片。含 vv-narrative-video 总控、Video Use 剪辑 helper、Video Shotcraft 镜头卡库。",
+      "description": "序幕（口播成片助手）：口播视频/录音/文案 → 解说成片。含 xumu 总控、Video Use 剪辑 helper、Video Shotcraft 镜头卡库。",
       "version": "0.4.2",
       "license": "MIT",
       "keywords": ["video", "editing", "remotion", "shotcraft", "口播"]

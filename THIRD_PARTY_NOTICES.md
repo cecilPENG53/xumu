@@ -15,7 +15,7 @@
 
 ## 引用但不分发
 
-- `skills/vv-narrative-video/references/mg-inspiration-index.json` 收录 32 条动态图形灵感的**链接与中文摘要**，不包含原提示词全文、代码或素材。
+- `skills/xumu/references/mg-inspiration-index.json` 收录 32 条动态图形灵感的**链接与中文摘要**，不包含原提示词全文、代码或素材。
 - [HyperFrames](https://github.com/heygen-com/hyperframes)、[Remotion](https://github.com/remotion-dev/remotion) 为可选外部依赖，需使用者自行安装并遵守其许可证（Remotion 对部分商业用途有单独的许可要求）。
 
 ## 使用者责任

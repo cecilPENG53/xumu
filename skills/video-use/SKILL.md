@@ -57,7 +57,7 @@ The skill lives in `video-use/`. User footage lives wherever they put it. All se
 
 ## Setup
 
-On cold start run `python3 ../vv-narrative-video/scripts/setup_env.py` (path relative to this SKILL.md). It installs ffmpeg/ffprobe, the Python deps and faster-whisper if missing, and is a no-op when everything is present. It then verifies:
+On cold start run `python3 ../xumu/scripts/setup_env.py` (path relative to this SKILL.md). It installs ffmpeg/ffprobe, the Python deps and faster-whisper if missing, and is a no-op when everything is present. It then verifies:
 
 - Transcription engine: `ELEVENLABS_API_KEY` (environment or `.env` at the video-use root) selects ElevenLabs Scribe. Without a key, `transcribe.py` automatically falls back to free local faster-whisper (Scribe-compatible JSON, single speaker `S0`, word timestamps). Do not block on a missing key; offer Scribe only when multi-speaker diarization matters. `VV_WHISPER_MODEL=medium|large-v3` trades speed for accuracy.
 - `ffmpeg` + `ffprobe` on PATH.

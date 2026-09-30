@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""One-shot environment setup for the VV narrative-video plugin.
+"""One-shot environment setup for the xumu (序幕) plugin.
 
 Checks and, where possible, installs everything the three skills need to actually cut a film:
   - FFmpeg / ffprobe          (apt-get, dnf, apk or brew)

@@ -1,6 +1,6 @@
 # 序幕 (Xumu) · Talking-Head Video Director Skill
 
-![GitHub stars](https://img.shields.io/github/stars/cecilPENG53/vv-narrative-video?style=flat-square)
+![GitHub stars](https://img.shields.io/github/stars/cecilPENG53/xumu?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
 ![Version](https://img.shields.io/badge/version-0.4.2-orange?style=flat-square)
 ![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
@@ -25,15 +25,15 @@ Built by **VVAI**, integrating and adapting [Video Use](https://github.com/brows
 **Claude Code (plugin — installs all three skills):**
 
 ```text
-/plugin marketplace add cecilPENG53/vv-narrative-video
-/plugin install vv-narrative-video@vvai
+/plugin marketplace add cecilPENG53/xumu
+/plugin install xumu@vvai
 ```
 
 **Manual (Claude Code / Codex):**
 
 ```bash
-git clone https://github.com/cecilPENG53/vv-narrative-video.git
-cp -r vv-narrative-video/skills/* ~/.claude/skills/   # Codex: ~/.codex/skills/
+git clone https://github.com/cecilPENG53/xumu.git
+cp -r xumu/skills/* ~/.claude/skills/   # Codex: ~/.codex/skills/
 ```
 
 > ⚠️ All three skill folders must live in the **same** `skills/` directory — the director skill finds its siblings by relative location.
@@ -41,18 +41,18 @@ cp -r vv-narrative-video/skills/* ~/.claude/skills/   # Codex: ~/.codex/skills/
 Then ask:
 
 ```text
-Use the 序幕 (vv-narrative-video) skill to turn ./talk.mp4 into a 3-minute 16:9 explainer for YouTube. Show me the production plan first.
+Use the 序幕 (xumu) skill to turn ./talk.mp4 into a 3-minute 16:9 explainer for YouTube. Show me the production plan first.
 ```
 
 ## What's inside
 
 | Skill | Role |
 |---|---|
-| `vv-narrative-video` | **Director entry point**: production profile, edit strategy, shot selection, master timeline, QA, delivery |
+| `xumu` | **Director entry point**: production profile, edit strategy, shot selection, master timeline, QA, delivery |
 | `video-use` | Editing helpers: transcription, cutting, grading, subtitle burn-in (from browser-use/video-use) |
 | `video-shotcraft` | 157 shot-recipe cards, Remotion components & template, motion workbench (from Vincentwei1021/video-shotcraft) |
 
-In Claude Code plugin mode the entry command is `/vv-narrative-video:vv-narrative-video` (plugin name before the colon, skill name after).
+In Claude Code plugin mode the entry command is `/xumu:xumu` (plugin name before the colon, skill name after).
 
 ## Workflow
 
@@ -65,7 +65,7 @@ In Claude Code plugin mode the entry command is `/vv-narrative-video:vv-narrativ
 
 ## Requirements
 
-Python 3.10+, FFmpeg/ffprobe, faster-whisper (auto-installed by `skills/vv-narrative-video/scripts/setup_env.py`), Node.js 18+ for Remotion shots. `ELEVENLABS_API_KEY` is optional (cloud transcription with speaker diarization); without it, local faster-whisper is used.
+Python 3.10+, FFmpeg/ffprobe, faster-whisper (auto-installed by `skills/xumu/scripts/setup_env.py`), Node.js 18+ for Remotion shots. `ELEVENLABS_API_KEY` is optional (cloud transcription with speaker diarization); without it, local faster-whisper is used.
 
 ## Boundaries
 
@@ -75,7 +75,7 @@ Python 3.10+, FFmpeg/ffprobe, faster-whisper (auto-installed by `skills/vv-narra
 
 ## License
 
-- VV original work (`skills/vv-narrative-video/`, root docs and config): [MIT](./LICENSE)
+- VV original work (`skills/xumu/`, root docs and config): [MIT](./LICENSE)
 - `skills/video-use/`: MIT, © Browser Use
 - `skills/video-shotcraft/`: Apache-2.0, © original authors
 

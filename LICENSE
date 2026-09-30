@@ -3,7 +3,7 @@ MIT License
 Copyright (c) 2026 VVAI
 
 This license applies to the original VV work in this repository: the
-`skills/vv-narrative-video/` directory and the repository root documentation
+`skills/xumu/` directory and the repository root documentation
 and configuration. Third-party components under `skills/video-use/` and
 `skills/video-shotcraft/` remain under their own licenses; see
 THIRD_PARTY_NOTICES.md.

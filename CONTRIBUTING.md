@@ -15,8 +15,8 @@
 ## 提 PR
 
 1. **改哪里**
-   - 工作流与规则：`skills/vv-narrative-video/SKILL.md` 与 `references/`
-   - 工具脚本：`skills/vv-narrative-video/scripts/`，请同步更新或新增 `test_*.py`
+   - 工作流与规则：`skills/xumu/SKILL.md` 与 `references/`
+   - 工具脚本：`skills/xumu/scripts/`，请同步更新或新增 `test_*.py`
    - 第三方目录 `skills/video-use/`、`skills/video-shotcraft/`：尽量只做分发适配；功能改进请优先提交给上游项目
 2. **保持可移植**：不写死任何绝对路径、用户名或插件缓存路径；依赖通过「同级 `skills/` 目录」发现。
 3. **保持确定性**：定制 MG 示例必须遵守 `references/mg-prompt-patterns.md` 的确定性渲染契约（画面只由帧号决定，禁止实时计时、累积状态与无种子随机）。
@@ -25,8 +25,8 @@
 6. **自测**：
 
    ```bash
-   python -m pytest skills/vv-narrative-video/scripts
-   python skills/vv-narrative-video/scripts/setup_env.py --check
+   python -m pytest skills/xumu/scripts
+   python skills/xumu/scripts/setup_env.py --check
    ```
 
 ## 文档风格
