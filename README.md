@@ -5,13 +5,14 @@
 ![Version](https://img.shields.io/badge/version-0.4.2-orange?style=flat-square)
 ![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
 ![Remotion](https://img.shields.io/badge/Remotion-MG-0B84F3?style=flat-square)
-![Claude Code](https://img.shields.io/badge/Claude%20Code-Supported-6B5B95?style=flat-square)
-![Cowork](https://img.shields.io/badge/Claude%20Cowork-Supported-D97757?style=flat-square)
-![Codex](https://img.shields.io/badge/Codex-Supported-222222?style=flat-square)
+![Claude](https://img.shields.io/badge/Claude-支持-D97757?style=flat-square)
+![GPT](https://img.shields.io/badge/GPT%20%2F%20Codex-支持-222222?style=flat-square)
+![豆包](https://img.shields.io/badge/豆包-可用-1E6FFF?style=flat-square)
+![More](https://img.shields.io/badge/更多%20AI%20Agent-可用-6B5B95?style=flat-square)
 
 > 🌏 **English version: [README.en.md](./README.en.md)** · 📘 **使用规范：[docs/USAGE.md](./docs/USAGE.md)**
 
-一个适配 Claude Code / Claude Cowork / Codex 等 Agent 环境的**口播视频成片技能包**。把**口播视频、一段录音或一份文案**交给 Agent，它会先判断「发到哪、讲什么、什么风格、多长」，再完成剪辑、选镜头、定制动态图形（MG）、字幕与合成，最后交付**成片 + 可继续修改的工程**。
+一个适配 Claude、GPT、豆包等 AI Agent 的**口播视频成片技能包**。把**口播视频、一段录音或一份文案**交给 Agent，它会先判断「发到哪、讲什么、什么风格、多长」，再完成剪辑、选镜头、定制动态图形（MG）、字幕与合成，最后交付**成片 + 可继续修改的工程**。
 
 它不是「一键出片」的黑盒，而是一套有确认点的导演工作流：
 
@@ -36,22 +37,16 @@ flowchart LR
 
 ## 30 秒开始
 
-**Claude Code（推荐，作为插件安装，三个 skill 一次装齐）：**
+不管你用 **Claude、GPT、豆包**还是其他 AI，只要它能读写文件、执行命令（Agent / 智能体 / 编程模式），把这段话直接发给它：
 
 ```text
-/plugin marketplace add cecilPENG53/xumu
-/plugin install xumu@vvai
-```
-
-也可以直接把这段话发给有 shell 权限的 AI Agent：
-
-```text
-帮我安装 xumu 技能包。请把 https://github.com/cecilPENG53/xumu 克隆到临时目录，
-再把其中 skills/ 下的 xumu、video-use、video-shotcraft 三个文件夹一起复制到 ~/.claude/skills/，
+帮我安装「序幕」口播成片技能包。请把 https://github.com/cecilPENG53/xumu 克隆到临时目录，
+再把其中 skills/ 下的 xumu、video-use、video-shotcraft 三个文件夹一起复制到你的 skills 目录
+（例如 ~/.claude/skills/ 或 ~/.codex/skills/，其他 Agent 请放到它读取技能的目录），
 安装完成后检查三个文件夹里都有 SKILL.md。
 ```
 
-安装后直接对 Agent 说：
+安装后直接对 AI 说：
 
 ```text
 用序幕，把 D:\素材\口播01.mp4 做成 B 站横屏解说视频，3 分钟左右，先给我制作方案。
@@ -68,15 +63,15 @@ flowchart LR
 
 ## 包含什么
 
-这是一个包含 **3 个 skill** 的插件，平时只需要从总控入口开始，它会在需要时调用另外两个：
+这是一个包含 **3 个 skill** 的技能包，平时只需要从总控入口开始，它会在需要时调用另外两个：
 
-| Skill | 调用名（Claude Code 插件） | 作用 |
-|---|---|---|
-| 🎛 **xumu** | `/xumu:xumu` | **总控入口**：制作定位、剪辑策略、选镜头、主时间线、验收与交付 |
-| ✂️ **video-use** | `/xumu:video-use` | 剪辑工具：转录、剪切、调色、字幕烧录（基于 browser-use/video-use） |
-| 🎞 **video-shotcraft** | `/xumu:video-shotcraft` | 镜头库：157 张镜头配方卡、Remotion 组件与模板、动效工作台（基于 Vincentwei1021/video-shotcraft） |
+| Skill | 作用 |
+|---|---|
+| 🎛 **xumu** | **总控入口**：制作定位、剪辑策略、选镜头、主时间线、验收与交付 |
+| ✂️ **video-use** | 剪辑工具：转录、剪切、调色、字幕烧录（基于 browser-use/video-use） |
+| 🎞 **video-shotcraft** | 镜头库：157 张镜头配方卡、Remotion 组件与模板、动效工作台（基于 Vincentwei1021/video-shotcraft） |
 
-> 💡 **关于冒号**：`xumu:xumu` 中，冒号前是**插件名**，冒号后是**插件里的某个 skill**。在 Cowork 里界面会显示短名 `/xumu`；以独立 skill 方式安装时，调用名就是 `/xumu`。
+> 💡 **怎么调用**：最简单的是直接对 AI 说「用序幕……」。也可以用命令：Claude 里是 `/xumu`（以插件方式安装时为 `/xumu:xumu`，冒号前是插件名、冒号后是 skill 名），GPT（Codex）里是 `$xumu`。
 
 ## 效果
 
@@ -119,40 +114,29 @@ flowchart LR
 
 ## 平台支持
 
-| 平台 | 状态 | 说明 |
+| AI | 状态 | 说明 |
 |------|------|------|
-| Claude Code | 支持 | 插件方式安装，三个 skill 一次装齐 |
-| Claude Cowork（桌面版） | 支持 | 通过插件市场添加本仓库，界面显示短名 `/xumu` |
-| Codex | 支持 | 把三个 skill 复制到 `~/.codex/skills/`，用 `$xumu` 触发 |
-| Cursor / 其他本地 Agent | 可用 | 需要能读写文件、执行 shell 命令 |
-| 普通 Chatbot | 不推荐 | 没有文件系统和命令行，无法剪辑和渲染 |
+| Claude（Claude Code / 桌面版 Cowork） | 支持 | 可用插件方式一次装齐，调用 `/xumu` |
+| GPT（Codex） | 支持 | 放到 `~/.codex/skills/`，用 `$xumu` 触发 |
+| 豆包 | 可用 | 需使用能读写文件、执行命令的智能体 / 编程模式 |
+| Cursor / 其他 AI Agent | 可用 | 需要能读写文件、执行 shell 命令 |
+| 普通聊天对话 | 不推荐 | 没有文件系统和命令行，无法剪辑和渲染 |
+
+> 判断标准只有一个：**你的 AI 能不能在你电脑上读写文件、运行命令**。能，就能用序幕。
 
 ## 安装
 
-### 方式一：Claude Code 插件（推荐）
+### 方式一：把下面这段话直接发给 AI（通用，推荐）
 
-```text
-/plugin marketplace add cecilPENG53/xumu
-/plugin install xumu@vvai
-```
-
-更新：
-
-```text
-/plugin marketplace update vvai
-```
-
-### 方式二：把下面这段话直接发给 AI
-
-> 帮我安装 `xumu` 技能包。请按下面步骤做：
+> 帮我安装「序幕」技能包。请按下面步骤做：
 >
-> 1. 确保 `~/.claude/skills/` 目录存在（不存在就创建）
-> 2. 执行 `git clone https://github.com/cecilPENG53/xumu.git` 到一个临时目录
-> 3. 把其中 `skills/xumu`、`skills/video-use`、`skills/video-shotcraft` **三个文件夹**都复制到 `~/.claude/skills/`
+> 1. 执行 `git clone https://github.com/cecilPENG53/xumu.git` 到一个临时目录
+> 2. 找到你读取技能（skills）的目录，不存在就创建
+> 3. 把其中 `skills/xumu`、`skills/video-use`、`skills/video-shotcraft` **三个文件夹**都复制进去
 > 4. 验证三个文件夹里都有 `SKILL.md`
 > 5. 告诉我安装好了，之后我说「把这段口播做成视频」就会触发
 
-### 方式三：手动命令行
+### 方式二：手动命令行
 
 macOS / Linux：
 
@@ -168,7 +152,16 @@ git clone https://github.com/cecilPENG53/xumu.git
 Copy-Item -Recurse xumu\skills\* "$HOME\.claude\skills\"
 ```
 
-Codex 用户把目标目录换成 `~/.codex/skills/`。
+上面以 Claude 的 `~/.claude/skills/` 为例；GPT（Codex）换成 `~/.codex/skills/`，其他 AI 换成它读取技能的目录。
+
+### 方式三：Claude 插件命令（仅 Claude Code）
+
+```text
+/plugin marketplace add cecilPENG53/xumu
+/plugin install xumu@vvai
+```
+
+更新：`/plugin marketplace update vvai`
 
 > ⚠️ **三个 skill 必须放在同一个 `skills/` 目录下**。总控 skill 通过「同级目录」找到 video-use 和 video-shotcraft，不依赖任何作者电脑上的绝对路径。
 
