@@ -1,5 +1,10 @@
 # 序幕
 
+<p align="center">
+  <a href="./README.md"><img alt="简体中文" src="https://img.shields.io/badge/简体中文-当前-D97757?style=for-the-badge"></a>
+  <a href="./README.en.md"><img alt="English" src="https://img.shields.io/badge/English-Switch-555555?style=for-the-badge"></a>
+</p>
+
 ![GitHub stars](https://img.shields.io/github/stars/cecilPENG53/xumu?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
 ![Version](https://img.shields.io/badge/version-0.4.2-orange?style=flat-square)
@@ -10,7 +15,7 @@
 ![豆包](https://img.shields.io/badge/豆包-可用-1E6FFF?style=flat-square)
 ![More](https://img.shields.io/badge/更多%20AI%20Agent-可用-6B5B95?style=flat-square)
 
-> 🌏 **English version: [README.en.md](./README.en.md)** · 📘 **使用规范：[docs/USAGE.md](./docs/USAGE.md)**
+> 📘 **使用规范：[docs/USAGE.md](./docs/USAGE.md)**
 
 一个适配 Claude、GPT、豆包等 AI Agent 的**口播视频成片技能包**。把**口播视频、一段录音或一份文案**交给 Agent，它会先判断「发到哪、讲什么、什么风格、多长」，再完成剪辑、选镜头、定制动态图形（MG）、字幕与合成，最后交付**成片 + 可继续修改的工程**。
 
