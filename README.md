@@ -1,4 +1,4 @@
-# VV Narrative Video · 口播成片助手
+# 序幕
 
 ![GitHub stars](https://img.shields.io/github/stars/cecilPENG53/vv-narrative-video?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
@@ -54,7 +54,7 @@ flowchart LR
 安装后直接对 Agent 说：
 
 ```text
-用 VV 口播成片助手，把 D:\素材\口播01.mp4 做成 B 站横屏解说视频，3 分钟左右，先给我制作方案。
+用序幕，把 D:\素材\口播01.mp4 做成 B 站横屏解说视频，3 分钟左右，先给我制作方案。
 ```
 
 也可以试这些请求：

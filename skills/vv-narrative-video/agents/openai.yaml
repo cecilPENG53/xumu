@@ -1,4 +1,4 @@
 interface:
-  display_name: "VV 口播成片助手"
+  display_name: "序幕"
   short_description: "先判断平台、内容、风格与时长，再剪辑、选用 Shotcraft 镜头并按需制作 MG"
-  default_prompt: "使用 VV 口播成片助手（$vv-narrative-video）根据我的视频、音频或文案，先确定平台、内容、风格与时长，再按确认的方案剪辑、选择 Shotcraft 镜头并按需制作 MG。"
+  default_prompt: "使用序幕（$vv-narrative-video）根据我的视频、音频或文案，先确定平台、内容、风格与时长，再按确认的方案剪辑、选择 Shotcraft 镜头并按需制作 MG。"

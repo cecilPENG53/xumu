@@ -1,4 +1,4 @@
-# VV Narrative Video · Talking-Head Video Director Skill
+# 序幕 (Xumu) · Talking-Head Video Director Skill
 
 ![GitHub stars](https://img.shields.io/github/stars/cecilPENG53/vv-narrative-video?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
@@ -41,7 +41,7 @@ cp -r vv-narrative-video/skills/* ~/.claude/skills/   # Codex: ~/.codex/skills/
 Then ask:
 
 ```text
-Use the VV narrative video skill to turn ./talk.mp4 into a 3-minute 16:9 explainer for YouTube. Show me the production plan first.
+Use the 序幕 (vv-narrative-video) skill to turn ./talk.mp4 into a 3-minute 16:9 explainer for YouTube. Show me the production plan first.
 ```
 
 ## What's inside
