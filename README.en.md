@@ -7,7 +7,7 @@
 
 ![GitHub stars](https://img.shields.io/github/stars/cecilPENG53/xumu?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.4.2-orange?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.5.0-orange?style=flat-square)
 ![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
 ![Remotion](https://img.shields.io/badge/Remotion-MG-0B84F3?style=flat-square)
 ![Claude](https://img.shields.io/badge/Claude-Supported-D97757?style=flat-square)
@@ -24,6 +24,7 @@ It is not a one-click black box but a director workflow with confirmation points
 - **Plan before cutting** — a production profile (platform × content × style × length) drives narrative structure, edit strategy and shot intensity.
 - **Not everything becomes a card** — keeping the speaker on screen or adding no animation are valid choices; only segments that need motion get shots.
 - **Shots with provenance** — compare first choices and alternatives from 157 cinematic shot-recipe cards; write custom MG only when there is a real expressive gap.
+- **Style and explanation with method** — a 54-style catalog and an explainer grammar map what a sentence does (define, compare, steps, data…) to concrete visuals and ready-made components.
 - **Verifiable at every step** — one master timeline, per-shot test renders, a plan checker, and review of real renders.
 
 > Distilled by **VVAI** from real talking-head video production, integrating and adapting [Video Use](https://github.com/browser-use/video-use) (MIT) and [Video Shotcraft](https://github.com/Vincentwei1021/video-shotcraft) (Apache-2.0).
@@ -82,12 +83,18 @@ A pack of **3 skills**. Normally you only start from the director entry point; i
 
 - 🎙 **Three inputs**: talking-head video (edit the footage) / recording (full-length visuals) / script only (record later, synthetic voiceover, or no narration)
 - 🧭 **Production profile**: narrative structure decided by audience, platform, content type, style intensity and target length; short pieces and chaptered long-form planned differently
-- ✂️ **Voice-first editing**: verbatim transcription, cuts aligned to word boundaries, tone and intent preserved; ElevenLabs optional, free local faster-whisper by default
+- ✂️ **Voice-first editing**: verbatim transcription, keep lists written as "from this sentence to that one", cut points snapped to real pauses by audio level, frame-exact splicing (audio/video within 1 frame); ElevenLabs optional, free local faster-whisper by default
+- ⏱ **Times written as "this sentence + offset"**: visual events follow the narration and shift automatically when the opening or the edit changes
 - 🎞 **Content-driven shots**: 157 Shotcraft shot-recipe cards (openings, camera moves, transitions, data, typography, rhythm…), comparing first choice and alternatives before committing
+- 🎨 **54 visual styles**: explainer, journalism, UI/product, graphic-design schools, illustration and craft, retro, tech, East Asian traditions (ink wash, paper cut, guochao), 3D and more, each with look, signature motion, best-fit content and ready implementations
+- 🗣 **Explainer grammar**: 20 sentence functions mapped to visual organization, an anti-slideshow checklist and phone-readable type sizes
+- 🧩 **Whiteboard one-take template**: world-coordinate camera, drawing hand, hand-drawn monitor hand-offs into real screen recordings, circular talking head; verified in a 7-minute film (HyperFrames)
 - ✨ **Custom MG**: 32 curated inspiration entries + brief template + a **frame-deterministic rendering contract** (every frame depends only on its frame number)
+- 📚 **Learning mode**: send it editing examples, style references or tutorials; it distills them into technique cards that are reused when content matches
+- 🔎 **Motion reference search** (optional): one command downloads 637 effect cards and HyperFrames component metadata, searchable with Chinese or English keywords
 - 🧱 **One master timeline**: `visual-plan.json` + `plan_tools.py` structural checks and hand-off manifest export
-- 🔌 **Optional extensions**: if HyperFrames is installed, it is used only for behind-subject captions, effects Shotcraft lacks, or music/SFX
-- 🛠 **One-command setup**: `setup_env.py` detects and installs FFmpeg, Python deps and faster-whisper, and checks Node.js
+- 🔌 **HyperFrames**: can be the main composition engine (e.g. the whiteboard one-take); otherwise used on demand for behind-subject captions, effects Shotcraft lacks, or music/SFX, always under Xumu's control
+- 🛠 **One-command setup**: `setup_env.py` detects and installs FFmpeg, Python deps and faster-whisper, and checks Node.js; it test-loads the transcription model in a separate process and repairs the ctranslate2 crash seen on some Windows PCs
 
 ## Good fit / not a fit
 

@@ -1,0 +1,179 @@
+<!doctype html>
+<!-- whiteboard-world template (HyperFrames 0.8.81, 1920x1080). Filled by wb_lib.Comp.finish(); see references/whiteboard-world.md -->
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "WB Hand"; src: url("%%FONT_URL%%"); font-weight: 400; }
+      :root { --board: #f8f7f3; --ink: #2b2b2b; --blue: #2f66c4; --green: #2e7d32; --red: #c93b3b; --grey: #6b737a; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--board); }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--board); color: var(--ink); font-family: "WB Hand", sans-serif; }
+      .stage { position: absolute; inset: 0; }
+      .abs { position: absolute; }
+      .hand-t { position: absolute; font-family: "WB Hand", sans-serif; white-space: nowrap; line-height: 1.15; color: var(--ink); }
+      .blue { color: var(--blue); } .green { color: var(--green); } .red { color: var(--red); } .grey { color: var(--grey); } .ink { color: var(--ink); }
+      svg.full { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
+      svg.loc { position: absolute; overflow: visible; }
+      path.k { fill: none; stroke: var(--ink); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+      path.k.thin { stroke-width: 4; }
+      path.k.blue { stroke: var(--blue); } path.k.green { stroke: var(--green); } path.k.red { stroke: var(--red); } path.k.grey { stroke: #8c959d; }
+      path.mark { stroke-width: 3.5; }
+      .smudge { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,255,255,0.95), rgba(255,255,255,0)); }
+      .ghost-smudge { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(140,150,160,0.10), rgba(140,150,160,0)); }
+
+      .shot { background: #fff; overflow: hidden; }
+      .cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+      .cam img { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: block; }
+      .camsvg { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
+      .sticky { position: absolute; background: #fffef6; padding: 10px 24px 12px; border: 3px solid var(--ink); border-radius: 10px; box-shadow: 0 8px 18px rgba(0,0,0,0.18); }
+
+      .note { position: absolute; background: #fff; padding: 8px 8px 0; box-shadow: 0 8px 16px rgba(0,0,0,0.16); }
+      .note .ph { width: 100%; overflow: hidden; background: #fff; }
+      .note .ph img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+      .note .cap { text-align: center; font-size: 26px; color: var(--ink); padding: 4px 0 8px; }
+      .tape { position: absolute; width: 90px; height: 26px; background: rgba(226,207,156,0.82); left: 50%; margin-left: -45px; top: -13px; }
+
+
+      /* circular talking head: 640px circle anchored bottom-right, scaled to 0.47 (about 300px) except for emphasis */
+      #facewrap { position: absolute; left: 1250px; top: 410px; width: 640px; height: 640px; border-radius: 50%; overflow: hidden;
+                  border: 8px solid #fff; box-shadow: 0 0 0 5px var(--blue), 0 14px 34px rgba(0,0,0,0.28); transform-origin: 100% 100%; background: #d9dde2; z-index: 20; }
+      #facewrap video { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; }
+
+      /* whiteboard world (one continuous board, one virtual camera) */
+      .worldclip { overflow: hidden; }
+      .world { background: transparent; will-change: transform; }
+
+      /* screen recording or footage clip, 1920x1080; the non-timed wrapper carries the camera */
+      .recwrap { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; opacity: 0; z-index: 3; }
+      .recwrap video { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; object-fit: cover; }
+      /* video cards taped on the board; the playing <video> follows the world camera */
+      .vframe { position: absolute; left: -16px; top: -16px; right: -16px; bottom: -16px; background: #fff; border-radius: 8px; box-shadow: 0 16px 34px rgba(0,0,0,0.22); }
+      .vimg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; }
+      .pinwrap { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; opacity: 0; z-index: 3; }
+      .pinwrap video { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; object-fit: cover; }
+      .recwrap svg { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
+
+      #hand { position: absolute; left: 0; top: 0; width: 300px; height: 300px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="%%TOTAL%%" data-width="1920" data-height="1080">
+      <div id="bg" class="clip stage" data-start="0" data-duration="%%TOTAL%%" data-track-index="0">
+        <div class="smudge" style="left: 180px; top: 140px; width: 760px; height: 300px"></div>
+        <div class="smudge" style="left: 1100px; top: 620px; width: 700px; height: 280px"></div>
+        <div class="ghost-smudge" id="gs1" style="left: 120px; top: 760px; width: 620px; height: 200px"></div>
+        <div class="ghost-smudge" id="gs2" style="left: 1240px; top: 90px; width: 560px; height: 180px"></div>
+      </div>
+%%BODY%%
+      <div id="hand-layer" class="clip stage" data-start="0" data-duration="%%TOTAL%%" data-track-index="9" style="pointer-events: none">
+        <div id="hand" data-layout-allow-overflow>
+          <svg width="300" height="300" viewBox="0 0 300 300">
+            <path d="M 196 300 L 300 196 L 300 300 Z" fill="#2c4a7a" stroke="#2b2b2b" stroke-width="4" stroke-linejoin="round" />
+            <path d="M 96 122 C 80 152, 112 214, 170 244 C 212 262, 252 252, 274 226 L 250 168 C 230 138, 192 108, 150 98 C 124 92, 104 102, 96 122 Z" fill="#f3c9a2" stroke="#2b2b2b" stroke-width="4" stroke-linejoin="round" />
+            <path d="M 16 16 L 52 37 L 63 36 L 190 163 L 163 190 L 36 63 L 37 52 Z" fill="#262626" stroke="#111" stroke-width="3" stroke-linejoin="round" />
+            <path d="M 16 16 L 30 24 L 24 30 Z" fill="#111" />
+            <path d="M 118 96 C 140 88, 166 100, 164 120 C 162 136, 138 140, 122 126 C 112 118, 110 104, 118 96 Z" fill="#f3c9a2" stroke="#2b2b2b" stroke-width="4" stroke-linejoin="round" />
+            <path d="M 100 140 C 118 132, 136 148, 128 164 C 120 176, 98 170, 96 156" fill="#f3c9a2" stroke="#2b2b2b" stroke-width="4" stroke-linejoin="round" />
+            <path d="M 118 176 C 136 168, 154 184, 146 200 C 138 212, 116 206, 114 192" fill="#f3c9a2" stroke="#2b2b2b" stroke-width="4" stroke-linejoin="round" />
+          </svg>
+        </div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        const tl = gsap.timeline({ paused: true });
+        const T = %%TOTAL%%;
+        const $ = (s) => document.querySelector(s);
+        const hash = (n, seed) => { const x = Math.sin(n * 127.1 + (seed || 1) * 311.7) * 43758.5453; return (x - Math.floor(x)) * 2 - 1; };
+        const renders = [];
+        tl.eventCallback("onUpdate", () => { for (const r of renders) r(); });
+
+        // ---- the drawing hand: position is a pure function of timeline time
+        const TIP = { x: 16, y: 16 }, AWAY = { x: 2060, y: 1260 };
+        const sched = [];
+        const io = gsap.parseEase("power2.inOut");
+        // virtual camera over the whiteboard world: s = zoom, (x, y) = screen offset of world origin, b = motion blur px
+        // one camera per whiteboard world (each world is one continuous take)
+        const CAMS = {}, VIEWS = {};
+        const mkcam = (id) => { CAMS[id] = { s: 1, x: 0, y: 0, b: 0, d: 1 }; VIEWS[id] = { S: 1, X: 0, Y: 0 }; return CAMS[id]; };
+        const toScreen = (id, p) => { const v = VIEWS[id]; return { x: v.X + p.x * v.S, y: v.Y + p.y * v.S }; };
+        const draw = (sel, at, dur, o = {}) => {
+          const p = typeof sel === "string" ? $(sel) : sel;
+          const len = p.getTotalLength();
+          p.style.strokeDasharray = `${len} ${len}`; p.style.strokeDashoffset = `${len}`;
+          tl.set(p, { opacity: 0 }, 0); tl.set(p, { opacity: 1 }, at);  // no round-cap dot before the stroke starts
+          tl.to(p, { strokeDashoffset: 0, duration: dur, ease: "power2.inOut" }, at);
+          if (o.hand !== false) {
+            const ox = o.ox || 0, oy = o.oy || 0, sc = o.sc || 1;
+            sched.push({ s: at, e: at + dur, cam: o.cam || null, pt: (u) => { const q = p.getPointAtLength(io(u) * len); return { x: ox + q.x * sc, y: oy + q.y * sc }; } });
+          }
+        };
+        const write = (sel, at, dur, box, o = {}) => {
+          tl.fromTo(sel, { clipPath: "inset(-30% 100% -30% 0%)" }, { clipPath: "inset(-30% 0% -30% 0%)", duration: dur, ease: "none" }, at);
+          if (o.hand !== false) {
+            const y0 = box.y + box.h * 0.72;
+            sched.push({ s: at, e: at + dur, cam: o.cam || null, pt: (u) => ({ x: box.x + u * box.w, y: y0 + Math.sin(u * box.w / 22) * box.h * 0.12 }) });
+          }
+        };
+        const pop = (sel, at) => tl.fromTo(sel, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" }, at);
+        const card = (sel, at, rot) => tl.fromTo(sel, { opacity: 0, y: 40, rotation: rot * 2 }, { opacity: 1, y: 0, rotation: rot, duration: 0.45, ease: "power3.out" }, at);
+        const drawGroup = (sel, at, dur, ox, oy, sc, camOn) => {
+          const g = $(sel); const paths = [...g.querySelectorAll("path")]; const step = dur / paths.length;
+          paths.forEach((p, i) => draw(p, at + i * step, step, { ox, oy, sc, cam: camOn }));
+          g.querySelectorAll("circle").forEach((c) => tl.fromTo(c, { opacity: 0 }, { opacity: 1, duration: 0.15 }, at + dur));
+        };
+        const lerp = (a, b, u) => ({ x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u });
+
+%%JS%%
+
+        sched.sort((a, b) => a.s - b.s);
+        const pins = [...document.querySelectorAll(".pinwrap")].map((el) => ({ el, id: el.dataset.pin, x: +el.dataset.x, y: +el.dataset.y, w: +el.dataset.w, r: +el.dataset.r }));
+        const worldEls = Object.fromEntries(Object.keys(CAMS).map((id) => [id, document.getElementById(id)]));
+        renders.push(() => {
+          // cameras first (the hand follows world coordinates through them); slow handheld drift keeps the board alive
+          const t = tl.time();
+          for (const id in CAMS) {
+            const cam = CAMS[id], view = VIEWS[id], el = worldEls[id];
+            const k = 1 + 0.008 * cam.d * Math.sin(t * 0.42);
+            view.S = cam.s * k;
+            view.X = (cam.x - 960) * k + 960 + 5 * cam.d * Math.sin(t * 0.31);
+            view.Y = (cam.y - 540) * k + 540 + 4 * cam.d * Math.sin(t * 0.23 + 1.1);
+            if (el) {
+              el.style.transform = `translate(${view.X.toFixed(2)}px, ${view.Y.toFixed(2)}px) scale(${view.S.toFixed(5)})`;
+              el.style.filter = cam.b > 0.05 ? `blur(${cam.b.toFixed(2)}px)` : "none";
+            }
+          }
+          for (const p of pins) {
+            const v = VIEWS[p.id], cam = CAMS[p.id];
+            if (!v) continue;
+            p.el.style.transform = `translate(${(v.X + p.x * v.S).toFixed(2)}px, ${(v.Y + p.y * v.S).toFixed(2)}px) rotate(${p.r}deg) scale(${(v.S * p.w / 1920).toFixed(5)})`;
+            p.el.style.filter = cam.b > 0.05 ? `blur(${cam.b.toFixed(2)}px)` : "none";
+          }
+        });
+        renders.push(() => {
+          const t = tl.time();
+          let cur = null, nxt = null;
+          for (const it of sched) { if (it.s <= t) cur = it; else { nxt = it; break; } }
+          const P = (it, u) => (it.cam ? toScreen(it.cam, it.pt(u)) : it.pt(u));
+          let pos = AWAY;
+          if (cur && t <= cur.e) pos = P(cur, Math.min(1, Math.max(0, (t - cur.s) / (cur.e - cur.s))));
+          else {
+            const endP = cur ? P(cur, 1) : null, startP = nxt ? P(nxt, 0) : null;
+            if (cur && nxt && nxt.s - cur.e <= 1.1) pos = lerp(endP, startP, io((t - cur.e) / (nxt.s - cur.e)));
+            else if (cur && t - cur.e < 0.45) pos = lerp(endP, AWAY, io((t - cur.e) / 0.45));
+            else if (nxt && nxt.s - t < 0.45) pos = lerp(AWAY, startP, io(1 - (nxt.s - t) / 0.45));
+          }
+          gsap.set("#hand", { x: pos.x - TIP.x, y: pos.y - TIP.y, rotation: hash(Math.floor(t * 10), 7) * 1.5 });
+        });
+        tl.set("#hand", { x: AWAY.x, y: AWAY.y }, 0);
+        tl.fromTo("#gs1", { x: 0 }, { x: 60, duration: 12, ease: "sine.inOut", yoyo: true, repeat: Math.max(0, Math.floor(T / 12) - 1) }, 0);
+        tl.fromTo("#gs2", { x: 0 }, { x: -50, duration: 10, ease: "sine.inOut", yoyo: true, repeat: Math.max(0, Math.floor(T / 10) - 1) }, 0);
+        window.__timelines = window.__timelines || {};
+        window.__timelines["main"] = tl;
+      })();
+    </script>
+  </body>
+</html>

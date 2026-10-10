@@ -1,0 +1,6 @@
+{
+  "_note": "Copy to backends.local.json (git-ignored) and fill in paths on your own machine. Never put API keys here.",
+  "python": {"interpreter": "C:/path/to/python.exe"},
+  "refs": {"dir": "D:/path/to/_refs"},
+  "learning": {"media_root": "D:/path/to/library-media"}
+}

@@ -7,7 +7,7 @@
 
 ![GitHub stars](https://img.shields.io/github/stars/cecilPENG53/xumu?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.4.2-orange?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.5.0-orange?style=flat-square)
 ![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
 ![Remotion](https://img.shields.io/badge/Remotion-MG-0B84F3?style=flat-square)
 ![Claude](https://img.shields.io/badge/Claude-支持-D97757?style=flat-square)
@@ -24,6 +24,7 @@
 - **先想清楚再动手**：平台 × 内容 × 风格 × 时长的制作定位，决定叙事结构、剪辑策略和镜头强弱。
 - **不把所有内容都变成卡片**：保留人物、不加动画也是有效决策；需要动态呈现的段落才去选镜头。
 - **镜头有出处**：从 157 张电影感镜头配方卡里比较首选与备选，确有表达缺口才写定制 MG。
+- **风格与讲法有章法**：54 种画面风格目录 + 解说语法表，把"这句话在做什么"（定义、对比、步骤、数据……）对应到具体画面和现成组件。
 - **每一步可验证**：唯一主时间线、逐镜头小样验证、结构检查工具、真实渲染验收。
 
 > 由 **VVAI** 在实际口播视频制作中沉淀而成，整合并适配了 [Video Use](https://github.com/browser-use/video-use)（MIT）与 [Video Shotcraft](https://github.com/Vincentwei1021/video-shotcraft)（Apache-2.0）。
@@ -82,12 +83,18 @@ flowchart LR
 
 - 🎙 **三种输入**：口播视频（剪辑原片）/ 录音（全片配画面）/ 纯文案（原声后录、合成配音或无旁白）
 - 🧭 **制作定位**：按受众、平台、内容类型、风格强度、目标时长决定叙事结构，短篇与章节式长片分别规划
-- ✂️ **原声剪辑**：逐字转录，剪点对齐词边界，保留语气和人物意图；ElevenLabs 可选，默认本地免费 faster-whisper
+- ✂️ **原声剪辑**：逐字转录，按"从哪句到哪句"写保留表，剪点按音量对到真实停顿，帧精确拼接（音画误差不超过 1 帧）；ElevenLabs 可选，默认本地免费 faster-whisper
+- ⏱ **时间写成"哪句话 + 偏移"**：画面事件跟着口播走，插入开场或改剪辑后自动顺延，不用逐处改秒数
 - 🎞 **内容选镜头**：157 张 Shotcraft 镜头配方卡（开场、运镜、转场、数据、排版、节奏…），先比较首选与备选再定案
+- 🎨 **54 种画面风格**：教学解说、新闻纪实、界面产品、平面设计流派、插画手作、复古、科技、东方传统（水墨、剪纸、国潮）、三维等，每种写明观感、标志动作、适合内容和现成实现
+- 🗣 **解说语法**：20 种句子作用 → 画面组织方式 + 去 PPT 感清单 + 手机可读字号
+- 🧩 **白板一镜到底模板**：世界坐标镜头、画笔手、手绘显示器衔接真实录屏、圆形人像；已在 7 分钟成片中验证（HyperFrames）
 - ✨ **定制 MG**：32 条精选灵感索引 + brief 模板 + **逐帧确定性渲染契约**（画面只由帧号决定）
+- 📚 **学习模式**：把喜欢的剪辑视频、风格案例或教程发给它，归纳成"手法卡"，以后按内容自动调用
+- 🔎 **动效参考检索**（可选）：一条命令下载 637 张动效卡与 HyperFrames 组件说明，用中文关键词检索
 - 🧱 **唯一主时间线**：`visual-plan.json` + `plan_tools.py` 结构检查与交接清单导出
-- 🔌 **按需扩展**：已安装 HyperFrames 时，仅在「背后字幕 / Shotcraft 缺的效果 / 配乐音效」三种情况下调用
-- 🛠 **一键环境**：`setup_env.py` 自动检测并安装 FFmpeg、Python 依赖、faster-whisper，检查 Node.js
+- 🔌 **HyperFrames**：可作主合成引擎（如白板一镜到底）；另在「背后字幕 / Shotcraft 缺的效果 / 配乐音效」三种情况下按需调用，始终由序幕总控
+- 🛠 **一键环境**：`setup_env.py` 自动检测并安装 FFmpeg、Python 依赖、faster-whisper，检查 Node.js；在独立进程里试加载转录模型，遇到部分 Windows 电脑上的 ctranslate2 崩溃会自动改装可用版本
 
 ## 适合 / 不适合
 
@@ -179,6 +186,7 @@ Copy-Item -Recurse xumu\skills\* "$HOME\.claude\skills\"
 | faster-whisper | 本地免费转录 | `setup_env.py` 自动安装 |
 | Node.js 18+ | Remotion 动画渲染 | 自行安装；`setup_env.py --remotion` 预取依赖 |
 | ElevenLabs API Key | 可选：云端转录 + 说话人区分 | 设置环境变量 `ELEVENLABS_API_KEY` |
+| 动效参考库 | 可选：解说语法与风格的组件检索 | `python skills/xumu/scripts/motion_index.py fetch` 后 `build`（约 155MB，需要 git 与网络） |
 
 首次实际制作时 Agent 会自动运行环境检查；也可以手动：
 
@@ -196,7 +204,7 @@ xumu/
 │   ├── plugin.json            # 插件清单
 │   └── marketplace.json       # 插件市场清单（/plugin marketplace add 用）
 ├── skills/
-│   ├── xumu/                  # 🎛 总控：SKILL.md + references/ + scripts/
+│   ├── xumu/                  # 🎛 总控：SKILL.md + references/ + scripts/ + assets/templates/ + library/
 │   ├── video-use/             # ✂️ 剪辑 helper（MIT，保留原许可证）
 │   └── video-shotcraft/       # 🎞 镜头卡库 + Remotion 源码（Apache-2.0，保留原许可证）
 ├── docs/USAGE.md              # 使用规范
@@ -213,6 +221,8 @@ xumu/
 |---|---|
 | `project.md` | 制作定位、确认记录、续作说明 |
 | `edl.json` | 剪辑决定表（使用 Video Use 时） |
+| `keeps.json` / `edl_voice.json` | 口播保留表与帧对齐剪辑表（`voice_edit.py`） |
+| `cue_chars.json` / `sections.json` / `timing.json` | 逐字时间表、段落起止、插入段登记，供"哪句话 + 偏移"换算时间 |
 | `visual-plan.json` | **唯一主时间线**：帧级时序与镜头 |
 | `assets.json` | 素材来源与授权 |
 | `shots/<shot_id>/` | 每个镜头独立目录；定制 MG 附 `brief.md` |

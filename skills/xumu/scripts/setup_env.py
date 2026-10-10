@@ -7,6 +7,8 @@ Checks and, where possible, installs everything the three skills need to actuall
   - Node.js >= 18 + npm       (for Remotion / Shotcraft animation shots)
   - Optional: warm the npm cache with Remotion (--remotion) so project installs are fast
   - Optional: pre-download the local whisper model (--whisper-model small|medium|large-v3)
+  - Local transcription runtime probe: loads a whisper model in a separate process; ctranslate2 4.7/4.8
+    crash on load on some Windows PCs, so a crash is repaired by pinning the verified ctranslate2 4.6.0
 
 Idempotent: anything already present is skipped. Safe to run at the start of every
 production session. Never writes into the plugin/skill directories.
@@ -21,6 +23,7 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import os
+from pathlib import Path
 import platform
 import shutil
 import subprocess
@@ -110,6 +113,15 @@ def pip_flags() -> list[str]:
     return flags
 
 
+def pip_install(packages: list[str]) -> bool:
+    """pip into this interpreter; environments created by uv have no pip, so fall back to `uv pip`."""
+    if importlib.util.find_spec("pip") is not None:
+        return run([sys.executable, "-m", "pip", "install", "-q", *pip_flags(), *packages], quiet=False)
+    if shutil.which("uv"):
+        return run(["uv", "pip", "install", "-q", "--python", sys.executable, *packages], quiet=False)
+    return False
+
+
 def ensure_python(check: bool) -> None:
     if sys.version_info < (3, 10):
         results.append(("Python >= 3.10", False, f"found {platform.python_version()}"))
@@ -122,7 +134,7 @@ def ensure_python(check: bool) -> None:
     if check:
         results.append(("Python deps (Video Use + local transcription)", False, "missing: " + ", ".join(missing)))
         return
-    ok = run([sys.executable, "-m", "pip", "install", "-q", *pip_flags(), *missing], quiet=False)
+    ok = pip_install(missing)
     results.append(("Python deps (Video Use + local transcription)", ok,
                     ("installed: " if ok else "failed: ") + ", ".join(missing)))
 
@@ -165,22 +177,77 @@ def warm_remotion(check: bool) -> None:
         run(sudo() + ["apt-get", "install", "-y", "-qq", *libs.split()])
 
 
-def warm_whisper(model: str | None, check: bool) -> None:
-    if not model or check or importlib.util.find_spec("faster_whisper") is None:
-        return
+CT2_PIN = ["ctranslate2==4.6.0", "setuptools<81"]   # 4.6.0 still imports pkg_resources
+
+
+def cached_whisper_model() -> str | None:
+    """Smallest faster-whisper model already in the Hugging Face cache, so --check can test offline."""
+    hub = Path(os.environ.get("HF_HOME", Path.home() / ".cache" / "huggingface")) / "hub"
+    if os.environ.get("HF_HUB_CACHE"):
+        hub = Path(os.environ["HF_HUB_CACHE"])
+    for size in ("tiny", "base", "small", "medium", "large-v3"):
+        if (hub / f"models--Systran--faster-whisper-{size}").is_dir():
+            return size
+    return None
+
+
+def whisper_probe(model: str, offline: bool) -> tuple[str, str]:
+    """Load the model in a child process: a native crash kills the child, not this script."""
+    code = ("from faster_whisper import WhisperModel; "
+            f"WhisperModel({model!r}, device='cpu', compute_type='int8', local_files_only={offline}); "
+            "print('LOAD_OK')")
     try:
-        from faster_whisper import WhisperModel
-        WhisperModel(model, device="cpu", compute_type="int8")
-        results.append((f"Whisper model '{model}'", True, "downloaded"))
-    except Exception as e:  # noqa: BLE001
-        results.append((f"Whisper model '{model}'", False, str(e)[:120]))
+        r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, timeout=1800)
+    except subprocess.TimeoutExpired:
+        return "error", "timed out (model download?)"
+    if "LOAD_OK" in r.stdout:
+        return "ok", ""
+    if "Traceback" in r.stderr:
+        return "error", r.stderr.strip().splitlines()[-1][:160]
+    return "crash", f"process exited with code {r.returncode} and no Python error"
+
+
+def check_whisper_runtime(model_arg: str | None, check: bool) -> None:
+    if importlib.util.find_spec("faster_whisper") is None:
+        return
+    name = "Local transcription runtime"
+    cached = cached_whisper_model()
+    model = model_arg or cached
+    if not model:
+        if check:
+            results.append((name, True, "not tested: no model cached (run without --check to test with 'tiny')"))
+            return
+        model = "tiny"
+    offline = check or (model == cached and not model_arg)
+    status, detail = whisper_probe(model, offline)
+    if status == "crash" and not check:
+        pinned = pip_install(CT2_PIN)   # judge by the re-probe: installers can report errors after installing
+        status, detail = whisper_probe(model, offline)
+        if status == "crash" and not pinned:
+            detail = "pinning ctranslate2 4.6.0 failed"
+        if status == "ok":
+            results.append((name, True, f"model '{model}' loads after pinning ctranslate2 4.6.0"))
+            return
+    if status == "ok":
+        results.append((name, True, f"model '{model}' loads"))
+    elif status == "crash":
+        results.append((name, False, f"crashes on model load ({detail}); known ctranslate2 4.7/4.8 issue on some "
+                                     f"Windows PCs - run without --check to pin ctranslate2 4.6.0, or use a cloud engine"))
+    else:
+        results.append((name, False, detail))
 
 
 def report_optional() -> None:
     key = os.environ.get("ELEVENLABS_API_KEY")
-    results.append(("Transcription engine", True,
-                    "ElevenLabs Scribe (key found)" if key else
-                    "local faster-whisper (free; set ELEVENLABS_API_KEY for Scribe diarization)"))
+    local_broken = any(n.startswith("Local transcription") and not ok for n, ok, _ in results)
+    if key:
+        results.append(("Transcription engine", True, "ElevenLabs Scribe (key found)"))
+    elif local_broken:
+        results.append(("Transcription engine", False,
+                        "none usable yet: repair the local runtime (run without --check) or set ELEVENLABS_API_KEY"))
+    else:
+        results.append(("Transcription engine", True,
+                        "local faster-whisper (free; set ELEVENLABS_API_KEY for Scribe diarization)"))
 
 
 def main() -> int:
@@ -195,13 +262,13 @@ def main() -> int:
     ensure_node(a.check)
     if a.remotion:
         warm_remotion(a.check)
-    warm_whisper(a.whisper_model, a.check)
+    check_whisper_runtime(a.whisper_model, a.check)
     report_optional()
 
     width = max(len(n) for n, _, _ in results)
     for name, ok, note in results:
         print(f"[{'OK' if ok else '!!'}] {name.ljust(width)}  {note}")
-    required_fail = [n for n, ok, _ in results if not ok and not n.startswith(("Node", "Remotion", "Whisper"))]
+    required_fail = [n for n, ok, _ in results if not ok and not n.startswith(("Node", "Remotion", "Local transcription", "Transcription engine"))]
     return 1 if required_fail else 0
 
 
