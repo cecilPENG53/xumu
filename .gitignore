@@ -22,6 +22,11 @@ edit/
 *.wav
 *.m4a
 
+# Personal config and local references (never distributed)
+backends.local.json
+_refs/
+library-media/
+
 # OS / editor
 .DS_Store
 Thumbs.db

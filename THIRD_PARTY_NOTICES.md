@@ -18,6 +18,19 @@
 - `skills/xumu/references/mg-inspiration-index.json` 收录 32 条动态图形灵感的**链接与中文摘要**，不包含原提示词全文、代码或素材。
 - [HyperFrames](https://github.com/heygen-com/hyperframes)、[Remotion](https://github.com/remotion-dev/remotion) 为可选外部依赖，需使用者自行安装并遵守其许可证（Remotion 对部分商业用途有单独的许可要求）。
 
+## 参考与改编（不分发代码或素材）
+
+`skills/xumu/references/` 中的解说语法、风格目录与风格技术栈，部分规则与分类参考并改写自以下项目的公开文档；本仓库不包含它们的代码或素材，组件以编号引用，可由使用者用 `motion_index.py fetch` 自行下载到本机：
+
+| 项目 | 许可证 | 用途 |
+|---|---|---|
+| [gongnyang/awesome-ai-motion](https://github.com/gongnyang/awesome-ai-motion) | MIT | 动效卡（`gn:` 编号）、按意图选动效的决策表与配方 |
+| [bangtutorial/bang-motion](https://github.com/bangtutorial/bang-motion) | MIT | 解说风格分类、解说结构、去 PPT 感规则 |
+| [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) | Apache-2.0 | 组件库条目（`hf:` 编号）的名称与说明 |
+| [Kianzzz/xilo-opus-video](https://github.com/Kianzzz/xilo-opus-video) | MIT | 代码类型分工、风格到技术组合的思路、弹簧手感分档 |
+
+`skills/xumu/assets/templates/whiteboard-world/` 为 VV 原创模板，随本仓库以 MIT 分发；它在运行时依赖使用者自行安装的 HyperFrames 与 GSAP。
+
 ## 使用者责任
 
 使用本技能包制作视频时，素材、字体、音乐、声音和外部生成服务的授权由使用者自行核对，并建议记录在项目的 `edit/assets.json` 中。

@@ -9,6 +9,7 @@ import sys
 
 
 ROUTES = ('real', 'shotcraft', 'mg', 'illustration', 'external', 'three')
+ENGINES = ('remotion', 'hyperframes', 'html', 'manim', 'ffmpeg', 'external')
 STATES = ('planned', 'awaiting_approval', 'waiting_external', 'rendered', 'verified')
 
 
@@ -132,6 +133,14 @@ def validate(plan, root, ready=False):
             fail(f'{label}.purpose is required')
         if shot.get('audio_policy') not in ('silent', 'separate'):
             fail(f'{label}.audio_policy must be silent or separate')
+        if 'engine' in shot and shot['engine'] not in ENGINES:
+            fail(f'{label}.engine is unsupported')
+        if 'style' in shot and not nonempty(shot['style']):
+            fail(f'{label}.style must be nonempty when present')
+        anchor = shot.get('anchor')
+        if anchor is not None and not (isinstance(anchor, dict) and isinstance(anchor.get('start'), dict)
+                                       and (isinstance(anchor.get('end'), dict) or integer(anchor.get('frames'), 1))):
+            fail(f'{label}.anchor needs a start reference and an end reference or positive frames')
         if shot.get('route') == 'shotcraft':
             for field in ('card', 'style_key'):
                 if not nonempty(shot.get(field)):

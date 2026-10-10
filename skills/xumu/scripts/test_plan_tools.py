@@ -130,6 +130,31 @@ class PlanTests(unittest.TestCase):
         self.plan['shots'][0]['route'] = 'shotcraft'
         self.assertGreaterEqual(len(self.errors()), 2)
 
+    def test_engine_and_style_are_optional(self):
+        self.assertNotIn('engine', self.plan['shots'][0])
+        self.assertEqual(self.errors(True), [])
+
+    def test_known_engine_and_style_pass_and_export(self):
+        self.plan['shots'][0].update(engine='remotion', style='flat-diagram')
+        self.assertEqual(self.errors(True), [])
+        result = export_manifest(self.plan, self.root, 'test-sha')
+        self.assertEqual(result['shots'][0]['engine'], 'remotion')
+        self.assertEqual(result['shots'][0]['style'], 'flat-diagram')
+
+    def test_unknown_engine_rejected(self):
+        self.plan['shots'][0]['engine'] = 'after-effects'
+        self.assertTrue(any('engine is unsupported' in e for e in self.errors()))
+
+    def test_anchor_shape(self):
+        self.plan['shots'][0]['anchor'] = {'start': {'cue': '分类'}, 'frames': 90}
+        self.assertEqual(self.errors(True), [])
+        self.plan['shots'][0]['anchor'] = {'start': {'cue': '分类'}}
+        self.assertTrue(any('anchor' in e for e in self.errors()))
+
+    def test_empty_style_rejected(self):
+        self.plan['shots'][0]['style'] = ' '
+        self.assertTrue(any('style must be nonempty' in e for e in self.errors()))
+
     def test_transparent_background_rejected(self):
         self.plan['shots'][0]['asset']['alpha'] = True
         self.assertTrue(any('transparent' in e for e in self.errors()))
