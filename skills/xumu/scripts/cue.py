@@ -19,6 +19,8 @@ Reference forms (JSON objects; "offset" in seconds is optional everywhere):
 
 Shots in visual-plan.json may carry  "anchor": {"start": <ref>, "end": <ref>}  or  {"start": <ref>, "frames": N};
 `sync` recomputes from_frame / duration_frames from anchors after any re-edit.
+Events inside a shot that follow words go in  "inner_cues": {"<name>": <ref>};  `sync` writes them as
+"inner_frames" relative to the shot start, so the shot's code and its render key see the same numbers.
 """
 import argparse
 import copy
@@ -78,7 +80,8 @@ class Timing:
         query = ''.join(c for c in text if c not in PUNCT)
         if not query:
             raise ValueError('empty cue text')
-        for length in range(len(query), 1, -1):
+        # Prefix fallback stops at two characters; a one-character cue still matches exactly.
+        for length in range(len(query), min(len(query), 2) - 1, -1):
             probe, start, hits = query[:length], lo, 0
             while True:
                 i = self.text.find(probe, start, hi + length - 1)
@@ -136,29 +139,53 @@ class Timing:
         return round(self.seconds(ref) * self.fps)
 
 
-def sync_plan(plan, timing):
-    """Recompute frames for every anchored shot; verified shots whose window moved drop to rendered."""
+def sync_plan(plan, timing, revision=None):
+    """Recompute frames for anchored shots and in-shot cue frames; changed verified shots drop to rendered.
+
+    inner_cues ({name: ref}) become inner_frames ({name: frame relative to the shot start}), which the
+    shot's code reads and the render key covers. With revision, the plan and its shots and sfx move to
+    it; asset and narration bindings stay as they are, for plan_tools.py to judge.
+    """
     plan = copy.deepcopy(plan)
     changes = []
     for shot in plan.get('shots', []):
-        anchor = shot.get('anchor')
-        if not anchor:
+        anchor, inner_cues = shot.get('anchor'), shot.get('inner_cues')
+        if not anchor and not inner_cues:
             continue
-        start = timing.frame(anchor['start'])
-        if 'end' in anchor:
-            duration = timing.frame(anchor['end']) - start
-        else:
-            duration = int(anchor['frames'])
-        if duration < 1:
-            raise ValueError(f'{shot.get("id")}: anchor end is not after start')
         old = (shot.get('from_frame'), shot.get('duration_frames'))
+        start, duration = old
+        if anchor:
+            start = timing.frame(anchor['start'])
+            if 'end' in anchor:
+                duration = timing.frame(anchor['end']) - start
+            else:
+                duration = int(anchor['frames'])
+            if duration < 1:
+                raise ValueError(f'{shot.get("id")}: anchor end is not after start')
+        change = {'id': shot.get('id')}
         if old != (start, duration):
             shot['from_frame'], shot['duration_frames'] = start, duration
-            change = {'id': shot.get('id'), 'from': old, 'to': [start, duration]}
+            change.update({'from': old, 'to': [start, duration],
+                           'kind': 'moved' if old[1] == duration else 'retimed'})
+        if inner_cues:
+            inner = {name: timing.frame(ref) - start for name, ref in inner_cues.items()}
+            for name, frame in inner.items():
+                if not 0 <= frame <= duration:
+                    timing.warnings.append(f'{shot.get("id")}: inner cue {name} falls outside the shot (local frame {frame})')
+            if inner != shot.get('inner_frames'):
+                change['inner_frames'] = {'from': shot.get('inner_frames'), 'to': inner}
+                shot['inner_frames'] = inner
+        if len(change) > 1:
             if shot.get('status') == 'verified':
                 shot['status'] = 'rendered'
                 change['status'] = 'verified -> rendered (re-check against the new window)'
             changes.append(change)
+    if revision:
+        timeline = plan.setdefault('timeline', {})
+        changes.append({'revision': {'from': timeline.get('revision'), 'to': revision}})
+        timeline['revision'] = revision
+        for item in plan.get('shots', []) + plan.get('sfx', []):
+            item['timeline_revision'] = revision
     return plan, changes
 
 
@@ -172,6 +199,7 @@ def main(argv=None):
     p = sub.add_parser('sync')
     p.add_argument('plan', type=Path)
     p.add_argument('--out', type=Path, required=True)
+    p.add_argument('--revision', help='new timeline revision for the plan, its shots and sfx')
     args = parser.parse_args(argv)
     try:
         timing = Timing(args.edit)
@@ -189,7 +217,7 @@ def main(argv=None):
                                    'end': timing.seconds({'insert': i['id'], 'edge': 'end'})} for i in timing.inserts]}
         else:
             plan = json.loads(args.plan.read_text(encoding='utf-8-sig'))
-            new_plan, changes = sync_plan(plan, timing)
+            new_plan, changes = sync_plan(plan, timing, args.revision)
             with args.out.open('x', encoding='utf-8') as stream:
                 json.dump(new_plan, stream, ensure_ascii=False, indent=2)
                 stream.write('\n')

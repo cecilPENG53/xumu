@@ -2,7 +2,7 @@
 name: xumu
 description: 序幕（口播成片助手）：把口播视频、录音或文案做成解说视频。先定平台、内容、风格与时长，再剪辑旁白，按内容从 Video Shotcraft 选镜头、从手法库调用学过的手法，按风格选绘制技术（SVG、Canvas、WebGL、Three.js、p5、Manim、人物抠像等）制作 B-roll 与 MG，最后合成验收。支持短篇与章节式长片。也用于学习用户发来的剪辑视频、风格案例或教程，归纳成手法卡入库。用于成片、B-roll/动效设计、动态包装或学习剪辑手法；只转录、润色文案或选题研究时不走完整流程。
 metadata:
-  version: "0.5.0"
+  version: "0.5.1"
 ---
 
 # 序幕
@@ -40,7 +40,7 @@ metadata:
 
 ### 2. 锁定旁白与主时间线
 
-按输入模式执行。原始逐字转录和原文单独保存，屏幕文案另记。口播剪辑用 `voice_edit.py`：锚点保留表 → 帧对齐 EDL → 帧精确拼接 → 逐字时间表（见 [制作路线与合成](references/production.md#口播剪辑链)）。实际旁白定下后再锁帧级时长；无旁白的片子按阅读与动作时长排帧。剪辑修订时递增 revision，重跑剪辑链并用 `cue.py sync` 刷新镜头帧位。
+按输入模式执行。原始逐字转录和原文单独保存，屏幕文案另记。口播剪辑用 `voice_edit.py`：锚点保留表 → 帧对齐 EDL → 帧精确拼接 → 逐字时间表（见 [制作路线与合成](references/production.md#口播剪辑链)）。实际旁白定下后再锁帧级时长；无旁白的片子按阅读与动作时长排帧。剪辑修订时重跑剪辑链，用 `cue.py sync --revision` 刷新镜头帧位并递增 revision，再用 `plan_tools.py diff` 列出要重渲的镜头，其余复用（见 [改动影响与渲染缓存](references/timeline.md#改动影响与渲染缓存)）。
 
 ### 3. 画面方案 → 用户确认
 
@@ -55,7 +55,7 @@ metadata:
 
 ### 4. 分镜头制作
 
-读 [制作路线与合成](references/production.md)。每个镜头独立编号、独立目录，按"静帧 → 短测 → 正式渲染 → 验收"推进，通过后进主片。所有定制 MG 遵守 [确定性渲染契约](references/mg-prompt-patterns.md#6-确定性渲染契约硬性)：画面只由帧号决定，并通过重复帧与乱序帧一致性检查。用到 Remotion、HyperFrames、图像或视频生成时，加载当前会话实际可用的对应 Skill 或工具并先读其规则。多个独立镜头可以并行制作，主时间线只由总控修改。
+读 [制作路线与合成](references/production.md)。每个镜头独立编号、独立目录，按"静帧 → 短测 → 正式渲染 → 验收"推进，通过后用 `plan_tools.py stamp` 记录渲染指纹再进主片。所有定制 MG 遵守 [确定性渲染契约](references/mg-prompt-patterns.md#6-确定性渲染契约硬性)：画面只由帧号决定，并通过重复帧与乱序帧一致性检查。用到 Remotion、HyperFrames、图像或视频生成时，加载当前会话实际可用的对应 Skill 或工具并先读其规则。多个独立镜头可以并行制作，主时间线只由总控修改。
 
 ### 5. 合成 → 整片验收 → 交付
 
@@ -90,6 +90,9 @@ python <skill>/scripts/mg_inspiration.py --use <用途> --max-energy <强度>   
 python <skill>/scripts/plan_tools.py check <edit>/visual-plan.json
 python <skill>/scripts/plan_tools.py check <edit>/visual-plan.json --ready
 python <skill>/scripts/plan_tools.py export <edit>/visual-plan.json --out <edit>/render-manifest.json
+python <skill>/scripts/plan_tools.py stamp <edit>/visual-plan.json --shot <id> --force   # 镜头渲染验收后记录指纹
+python <skill>/scripts/plan_tools.py diff <旧计划> <新计划>      # 修改影响：重渲 / 复用 / 只重新合成
+python <skill>/scripts/plan_tools.py stale <edit>/visual-plan.json   # 哪些镜头文件已过期
 ```
 
 剪辑与时间工具（用法见 [制作路线与合成](references/production.md#口播剪辑链)、[时间线契约](references/timeline.md#时间引用)）：
@@ -99,7 +102,7 @@ python <skill>/scripts/voice_edit.py edl <edit>/keeps.json --out <edit>/edl_voic
 python <skill>/scripts/voice_edit.py render <edit>/edl_voice.json --out <edit>/build/voice_cut.mp4 [--size 1080x1920]
 python <skill>/scripts/voice_edit.py cues <edit>/edl_voice.json --transcripts <edit>/transcripts --out-dir <edit>
 python <skill>/scripts/cue.py --edit <edit> resolve '{"cue": "跟地图", "section": "B09", "offset": 2.4}'
-python <skill>/scripts/cue.py --edit <edit> sync <edit>/visual-plan.json --out <edit>/visual-plan.r2.json
+python <skill>/scripts/cue.py --edit <edit> sync <edit>/visual-plan.json --out <edit>/visual-plan.r2.json --revision r2
 python <skill>/scripts/media_tools.py clips | cutpoint | level | measure | normalize | fontcheck ...
 python <skill>/scripts/motion_index.py search 对比 | show gn:split-compare | build --force
 ```

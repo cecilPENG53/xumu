@@ -50,9 +50,12 @@ v1 规则：整数 fps、整数帧、半开窗口 `[from, from+duration)`，背�
   - `engine`：`remotion | hyperframes | html | manim | ffmpeg | external`，填写时校验取值。
   - `style`：非空字符串，取 [风格目录](style-catalog.md) 的 key，或 project.md 中定义的新 key。
   - `anchor`：这个镜头时间的来源，`{"start": <引用>, "end": <引用>}` 或 `{"start": <引用>, "frames": N}`，见下节。有 anchor 的镜头，`from_frame`/`duration_frames` 由 `cue.py sync` 生成。
+  - `props`：镜头的可调参数（文案、颜色、数值、开关），镜头代码从这里读取。
+  - `inputs`：渲染这个镜头用到的源文件或目录（代码、brief、props 文件、素材），相对计划目录。只列源文件；目录按内容递归计算，跳过点开头的文件夹及 `node_modules`、`__pycache__`、`dist`、`build`、`out`，任何镜头的 `asset.file` 都不计入。
+  - `inner_cues` / `inner_frames`：镜头内部跟字的时刻（某个词出现时弹出、敲击）。`inner_cues` 写 `{"名称": <引用>}`，`cue.py sync` 换算成 `inner_frames`（相对镜头起点的帧），镜头代码从 `inner_frames` 读取。
 - `audio_policy`：`silent` 或 `separate`。视觉文件自身的音轨一律不自动混入；`separate` 必须有对应的 SFX 条目。
 - `route=shotcraft` 时另需 `card` 与 `style_key`。计划工具只检查非空，名称真实性对照上游索引人工核对。
-- 镜头 `asset`：`file`、`timeline_revision`、布尔 `alpha`。就绪时镜头为 verified、文件存在、资产绑定当前 revision。background 不透明，透明内容放在 overlay；透明与否由媒体实际编码决定。
+- 镜头 `asset`：`file`、`timeline_revision`、布尔 `alpha`，可选 `render_key`（由 `plan_tools.py stamp` 写入，见 [改动影响与渲染缓存](#改动影响与渲染缓存)）。就绪时镜头为 verified、文件存在，资产绑定当前 revision，或 `render_key` 与当前渲染输入一致。background 不透明，透明内容放在 overlay；透明与否由媒体实际编码决定。
 - `sfx`：数组，每项含唯一 `id`、`shot_id`、当前 `timeline_revision`、非负 `offset_frames`、正 `duration_frames`、`gain`（有限值，0–4）、`file`。音效位于绑定镜头内部，该镜头 `audio_policy=separate`。全片音效分配到相应镜头窗口；主旁白不放进 sfx。
 
 持续 BGM 暂不进入镜头协议：在 `project.md` 记录来源、起止、音量与淡入淡出，由制作工程单独管理。`narration.kind=none` 时也可以有 BGM。
@@ -87,13 +90,35 @@ v1 规则：整数 fps、整数帧、半开窗口 `[from, from+duration)`，背�
 - 能用 `cue` 就用 `cue`，跟着语义词走；`at` 只用于与口播无关的时刻。
 - 只匹配到文本前缀时，工具会给出 warning，说明转录与引用文本有出入，检查后改准引用。
 - 在项目的合成生成脚本里通过 `from cue import Timing` 调用同一套解析，不在脚本里另写换算或手填秒数。
-- 剪辑或插入段变化后：重跑 `voice_edit.py cues` → `cue.py sync` 生成新版计划 → 递增 revision → `plan_tools.py check`。sync 会把窗口移动过的 verified 镜头降为 rendered，提醒重新检查。
+- 剪辑或插入段变化后：重跑 `voice_edit.py cues` → `cue.py sync --revision <新版本>` 生成新版计划（计划、镜头、音效的 revision 一起递增）→ 更新 `total_frames` → `plan_tools.py diff` 列出影响 → 只重渲需要的镜头 → `plan_tools.py check`。sync 会把窗口或 `inner_frames` 变过的 verified 镜头降为 rendered，提醒重新检查。
+- 镜头内部跟字的时刻写进 `inner_cues`，不要在镜头代码里另用 `Timing` 解析。代码里自行解析的时刻不进渲染指纹，剪辑后会被误判为可复用；实在需要时把 `cue_chars.json` 列入该镜头的 `inputs`（代价是每次剪辑都重渲）。
 
 ```text
 python <skill>/scripts/cue.py --edit <edit> sections
 python <skill>/scripts/cue.py --edit <edit> resolve '{"cue": "跟地图", "section": "B09", "offset": 2.4}'
-python <skill>/scripts/cue.py --edit <edit> sync <edit>/visual-plan.json --out <edit>/visual-plan.r2.json
+python <skill>/scripts/cue.py --edit <edit> sync <edit>/visual-plan.json --out <edit>/visual-plan.r2.json --revision r2
 ```
+
+## 改动影响与渲染缓存
+
+改一处不应整片重做。每个镜头从局部第 0 帧渲染，**渲染指纹**决定它的文件能否继续用。指纹包含：画布 `fps`/`width`/`height`，镜头的 `role`、`route`、`engine`、`style`、`screen_text`、`card`、`style_key`、`props`、`inner_frames`、`duration_frames`，以及 `inputs` 里每个文件的内容。不包含 `from_frame`、`quote`、`purpose`、`status`、`anchor` 与音效：只挪位置的镜头复用原文件，由合成放到新位置。
+
+1. **渲染并验收一个镜头后**：`stamp` 把当时的指纹写进 `asset.render_key`，同时把资产绑定到当前 revision。指纹一致的资产在 revision 递增后仍然有效，不必重新绑定。
+2. **修改前后**：`diff <旧计划> <新计划>` 给出影响清单，动手前把摘要告诉用户：
+   - `rerender`：需要重渲，附原因（如 `duration_frames: 90 -> 60`、`props changed`、`input changed: shots/s1`）；
+   - `reuse_moved`：只换了位置，复用原文件，复查新位置的接缝；
+   - `unchanged`：不动；`added` / `removed`：新增或删除；
+   - `unverified`：旧资产没有 `render_key`，只比较了计划字段，源文件改动看不到，需确认或重渲后 `stamp`；
+   - `composite`：旁白、底片、音效或总长变化，只需重新合成。
+3. **随时**：`stale <计划>` 列出哪些镜头文件仍然有效、哪些过期。`check` 也会对有 `render_key` 但已过期的资产报错。
+
+```text
+python <skill>/scripts/plan_tools.py stamp <edit>/visual-plan.json --shot <id> [--shot <id> …] --force
+python <skill>/scripts/plan_tools.py diff <edit>/visual-plan.r1.json <edit>/visual-plan.r2.json
+python <skill>/scripts/plan_tools.py stale <edit>/visual-plan.json
+```
+
+`stamp` 用 `--out` 写新文件，或用 `--force` 原地更新计划（只改被盖章镜头的 asset）。指纹只认 `inputs` 里声明的文件：没列进去的源码、共享设计规范或字体改了，工具发现不了，所以共享文件也要列进依赖它的镜头。整片作为一个合成工程渲染的路线（如 HyperFrames 白板一镜到底）是一个大镜头，任何改动都整片重渲。
 
 ## 运行工具
 
@@ -103,7 +128,7 @@ python <skill>/scripts/plan_tools.py check <edit>/visual-plan.json --ready
 python <skill>/scripts/plan_tools.py export <edit>/visual-plan.json --out <edit>/render-manifest.json
 ```
 
-工具离线运行，不调用生成服务、不渲染媒体、不修改输入计划。`check` 检查类型、时间范围、版本、画面覆盖、声音归属、engine 取值与 anchor 结构；`--ready` 额外要求锁定、verified 状态与本地文件存在。`export` 先执行 ready 检查，再输出绝对文件路径、秒数与输入计划的 SHA256；目标已存在时拒绝覆盖，改用带版本的文件名。
+工具离线运行，不调用生成服务、不渲染媒体；除 `stamp --force` 外不修改输入计划。`check` 检查类型、时间范围、版本、画面覆盖、声音归属、engine 取值与 anchor 结构；`--ready` 额外要求锁定、verified 状态与本地文件存在。`export` 先执行 ready 检查，再输出绝对文件路径、秒数与输入计划的 SHA256；目标已存在时拒绝覆盖，改用带版本的文件名。
 
 `render-manifest.json` 保留帧时序、route、engine、style，增加 `start_seconds`、`duration_seconds`，SFX 另加全片 `from_frame`。项目级 Remotion/FFmpeg 实现从这里读取数值。
 
