@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Offline timeline checks and non-destructive handoff export. No media rendering."""
+"""Offline timeline checks, render-cache keys, change impact and non-destructive handoff export. No media rendering."""
 import argparse
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 import sys
 
@@ -11,6 +12,12 @@ import sys
 ROUTES = ('real', 'shotcraft', 'mg', 'illustration', 'external', 'three')
 ENGINES = ('remotion', 'hyperframes', 'html', 'manim', 'ffmpeg', 'external')
 STATES = ('planned', 'awaiting_approval', 'waiting_external', 'rendered', 'verified')
+# Shot fields that change the rendered picture. from_frame is left out on purpose: shots render
+# from local frame 0, so moving one only changes where the composite places it.
+RENDER_FIELDS = ('role', 'route', 'engine', 'style', 'screen_text', 'card', 'style_key',
+                 'props', 'inner_frames', 'duration_frames')
+# Tool and output folders skipped when an input is a directory.
+SKIP_DIRS = {'node_modules', '__pycache__', 'dist', 'build', 'out'}
 
 
 def integer(value, minimum=0):
@@ -26,6 +33,100 @@ def local_path(root, value):
         raise ValueError('expected a local file path, not a URL or empty value')
     path = Path(value)
     return (path if path.is_absolute() else root / path).resolve()
+
+
+# ---------------------------------------------------------------- render cache keys
+
+def file_digest(path):
+    digest = hashlib.sha256()
+    with path.open('rb') as stream:
+        for chunk in iter(lambda: stream.read(1 << 20), b''):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def input_digest(root, value, exclude=frozenset()):
+    """Digest of one source file, or of every source file under a directory (paths included)."""
+    path = local_path(root, value)
+    if path.is_file():
+        return file_digest(path)
+    if not path.is_dir():
+        raise ValueError(f'input does not exist: {value}')
+    digest = hashlib.sha256()
+    for folder, dirs, files in os.walk(path):
+        dirs[:] = sorted(d for d in dirs if not d.startswith('.') and d not in SKIP_DIRS)
+        for name in sorted(files):
+            item = Path(folder) / name
+            if name.startswith('.') or item.resolve() in exclude:
+                continue
+            rel = item.relative_to(path).as_posix()
+            digest.update(f'{rel}\0{file_digest(item)}\n'.encode('utf-8'))
+    return digest.hexdigest()
+
+
+def asset_files(plan, root):
+    """Rendered outputs never count as inputs, even when they sit inside an input folder."""
+    out = set()
+    for shot in plan.get('shots', []) if isinstance(plan, dict) else []:
+        asset = shot.get('asset') if isinstance(shot, dict) else None
+        if isinstance(asset, dict):
+            try:
+                out.add(local_path(root, asset.get('file')))
+            except (ValueError, OSError):
+                pass
+    return frozenset(out)
+
+
+def render_parts(plan, shot, root, exclude=frozenset()):
+    timeline = plan.get('timeline') or {}
+    return {
+        'canvas': {key: timeline.get(key) for key in ('fps', 'width', 'height')},
+        # Copied, so a stamp never aliases the live props it describes.
+        'fields': json.loads(json.dumps({key: shot[key] for key in RENDER_FIELDS if key in shot})),
+        'inputs': {value: input_digest(root, value, exclude) for value in shot.get('inputs', [])},
+    }
+
+
+def render_key(parts):
+    blob = json.dumps(parts, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+    return hashlib.sha256(blob.encode('utf-8')).hexdigest()
+
+
+def part_changes(old, new):
+    """Readable reasons why two render_parts differ."""
+    reasons = []
+    for key in ('fps', 'width', 'height'):
+        if old.get('canvas', {}).get(key) != new['canvas'].get(key):
+            reasons.append(f'canvas {key}: {old.get("canvas", {}).get(key)} -> {new["canvas"].get(key)}')
+    old_fields = old.get('fields', {})
+    for key in RENDER_FIELDS:
+        before, after = old_fields.get(key), new['fields'].get(key)
+        if before != after:
+            reasons.append(f'{key}: {before} -> {after}' if key == 'duration_frames' else f'{key} changed')
+    old_inputs = old.get('inputs', {})
+    for value in sorted(set(old_inputs) | set(new['inputs'])):
+        if value not in old_inputs:
+            reasons.append(f'input added: {value}')
+        elif value not in new['inputs']:
+            reasons.append(f'input removed: {value}')
+        elif old_inputs[value] != new['inputs'][value]:
+            reasons.append(f'input changed: {value}')
+    return reasons
+
+
+def shot_state(plan, shot, root, exclude=frozenset()):
+    """needs_render | unstamped | fresh | stale, plus reasons and the current parts."""
+    asset = shot.get('asset')
+    current = render_parts(plan, shot, root, exclude)
+    if not isinstance(asset, dict):
+        return 'needs_render', ['no rendered asset'], current
+    stamp = asset.get('render_key')
+    if not isinstance(stamp, dict):
+        return 'unstamped', [], current
+    if stamp.get('sha256') == render_key(current):
+        return 'fresh', [], current
+    parts = stamp.get('parts')
+    return 'stale', (part_changes(parts, current) if isinstance(parts, dict) else []) or ['render inputs changed'], current
 
 
 def validate(plan, root, ready=False):
@@ -109,6 +210,7 @@ def validate(plan, root, ready=False):
         return errors + ['shots must be an array']
     ids = {}
     backgrounds = []
+    exclude = asset_files(plan, root)
     for i, shot in enumerate(shots):
         label = f'shots[{i}]'
         if not isinstance(shot, dict):
@@ -145,6 +247,17 @@ def validate(plan, root, ready=False):
             for field in ('card', 'style_key'):
                 if not nonempty(shot.get(field)):
                     fail(f'{label}.{field} is required for Shotcraft')
+        if 'props' in shot and not isinstance(shot['props'], dict):
+            fail(f'{label}.props must be an object')
+        inputs = shot.get('inputs', [])
+        if not (isinstance(inputs, list) and all(nonempty(v) for v in inputs)):
+            fail(f'{label}.inputs must be an array of local paths')
+        inner_cues = shot.get('inner_cues', {})
+        if not (isinstance(inner_cues, dict) and all(isinstance(r, dict) for r in inner_cues.values())):
+            fail(f'{label}.inner_cues must map names to time references')
+        inner_frames = shot.get('inner_frames', {})
+        if not (isinstance(inner_frames, dict) and all(integer(f) for f in inner_frames.values())):
+            fail(f'{label}.inner_frames must map names to nonnegative local frames')
         start, duration = shot.get('from_frame'), shot.get('duration_frames')
         if not integer(start) or not integer(duration, 1):
             fail(f'{label}: from_frame/duration_frames must be nonnegative/positive integers')
@@ -159,8 +272,22 @@ def validate(plan, root, ready=False):
             if not isinstance(asset, dict):
                 fail(f'{label}.asset must be an object')
             else:
-                if asset.get('timeline_revision') != revision:
-                    fail(f'{label}.asset: stale timeline_revision')
+                # A matching render_key proves the file still fits this shot, so it carries
+                # across timeline revisions; without one the file binds to its revision.
+                if 'render_key' not in asset:
+                    if asset.get('timeline_revision') != revision:
+                        fail(f'{label}.asset: stale timeline_revision')
+                elif not (isinstance(asset['render_key'], dict) and nonempty(asset['render_key'].get('sha256'))
+                          and isinstance(asset['render_key'].get('parts'), dict)):
+                    fail(f'{label}.asset.render_key needs sha256 and parts (use plan_tools.py stamp)')
+                elif isinstance(inputs, list) and all(nonempty(v) for v in inputs):
+                    try:
+                        state, reasons, _ = shot_state(plan, shot, root, exclude)
+                    except (ValueError, OSError) as exc:
+                        fail(f'{label}.inputs: {exc}')
+                    else:
+                        if state == 'stale':
+                            fail(f'{label}.asset is stale, re-render: ' + '; '.join(reasons))
                 if type(asset.get('alpha')) is not bool:
                     fail(f'{label}.asset.alpha must be boolean')
                 if shot.get('role') == 'background' and asset.get('alpha') is True:
@@ -248,6 +375,94 @@ def export_manifest(plan, root, source_hash):
     return manifest
 
 
+def shots_by_id(plan):
+    return {s['id']: s for s in plan.get('shots', []) if isinstance(s, dict) and nonempty(s.get('id'))}
+
+
+def without_revision(item):
+    if not isinstance(item, dict):
+        return item
+    return {k: v for k, v in item.items() if k != 'timeline_revision'}
+
+
+def stale_report(plan, root):
+    """Which shot files can be reused as they are and which need rendering."""
+    exclude = asset_files(plan, root)
+    rows = {'fresh': [], 'stale': [], 'needs_render': [], 'unstamped': []}
+    for sid, shot in shots_by_id(plan).items():
+        state, reasons, _ = shot_state(plan, shot, root, exclude)
+        rows[state].append({'id': sid, 'reasons': reasons} if state == 'stale' else sid)
+    return rows
+
+
+def plan_diff(old, new, old_root, new_root):
+    """Impact of going from one plan to the next: what to re-render, reuse, or only recomposite."""
+    old_shots, new_shots = shots_by_id(old), shots_by_id(new)
+    old_exclude, new_exclude = asset_files(old, old_root), asset_files(new, new_root)
+    report = {'rerender': [], 'reuse_moved': [], 'unchanged': [], 'unverified': [],
+              'added': [], 'removed': sorted(set(old_shots) - set(new_shots)), 'composite': []}
+    for sid, shot in new_shots.items():
+        prev = old_shots.get(sid)
+        state, reasons, current = shot_state(new, shot, new_root, new_exclude)
+        if prev is None:
+            report['added'].append(sid)
+            continue
+        if state == 'unstamped':
+            # No key from render time: compare plan fields only (file contents are today's on both sides).
+            reasons = part_changes(render_parts(old, prev, old_root, old_exclude), current)
+            state = 'stale' if reasons else 'unverified'
+        if state in ('stale', 'needs_render'):
+            report['rerender'].append({'id': sid, 'reasons': reasons})
+            continue
+        window = [prev.get('from_frame'), prev.get('duration_frames')]
+        moved = window != [shot.get('from_frame'), shot.get('duration_frames')]
+        if state == 'unverified':
+            report['unverified'].append({'id': sid, 'moved': moved,
+                                         'note': 'no render_key: source edits are invisible; confirm, or re-render and stamp'})
+        elif moved:
+            report['reuse_moved'].append({'id': sid, 'from': window,
+                                          'to': [shot.get('from_frame'), shot.get('duration_frames')]})
+        else:
+            report['unchanged'].append(sid)
+    for key in ('narration', 'base_video'):
+        if without_revision(old.get(key)) != without_revision(new.get(key)):
+            report['composite'].append(f'{key} changed')
+    if (old.get('timeline') or {}).get('total_frames') != (new.get('timeline') or {}).get('total_frames'):
+        report['composite'].append('total_frames changed')
+    old_sfx = {s.get('id'): without_revision(s) for s in old.get('sfx', []) if isinstance(s, dict)}
+    new_sfx = {s.get('id'): without_revision(s) for s in new.get('sfx', []) if isinstance(s, dict)}
+    changed_sfx = sorted(str(k) for k in set(old_sfx) | set(new_sfx) if old_sfx.get(k) != new_sfx.get(k))
+    if changed_sfx:
+        report['composite'].append('sfx changed: ' + ', '.join(changed_sfx))
+    report['recomposite'] = bool(report['rerender'] or report['reuse_moved'] or report['added']
+                                 or report['removed'] or report['composite'] or report['unverified'])
+    report['summary'] = (f"{len(report['rerender'])} re-render, {len(report['added'])} new, "
+                         f"{len(report['reuse_moved'])} reuse (moved), {len(report['unchanged'])} unchanged, "
+                         f"{len(report['unverified'])} unverified, {len(report['removed'])} removed")
+    return report
+
+
+def stamp_shots(plan, root, shot_ids):
+    """Record the render key of freshly rendered shots; their files then carry across revisions."""
+    shots, exclude = shots_by_id(plan), asset_files(plan, root)
+    revision = (plan.get('timeline') or {}).get('revision')
+    if not nonempty(revision):
+        raise ValueError('timeline.revision must be nonempty')
+    stamped = []
+    for sid in shot_ids:
+        shot = shots.get(sid)
+        if shot is None:
+            raise ValueError(f'unknown shot id: {sid}')
+        if not isinstance(shot.get('asset'), dict):
+            raise ValueError(f'{sid}: no asset to stamp; render the shot first')
+        parts = render_parts(plan, shot, root, exclude)
+        shot['asset']['render_key'] = {'sha256': render_key(parts), 'parts': parts}
+        shot['asset']['timeline_revision'] = revision
+        stamped.append({'id': sid, 'sha256': shot['asset']['render_key']['sha256'],
+                        'inputs': len(parts['inputs'])})
+    return stamped
+
+
 def reject_constant(value):
     raise ValueError(f'non-finite JSON constant: {value}')
 
@@ -261,11 +476,40 @@ def main(argv=None):
     export = sub.add_parser('export')
     export.add_argument('plan', type=Path)
     export.add_argument('--out', type=Path, required=True)
+    diff = sub.add_parser('diff', help='impact of a plan revision: which shots to re-render or reuse')
+    diff.add_argument('old', type=Path)
+    diff.add_argument('plan', type=Path)
+    stale = sub.add_parser('stale', help='which shot files still match their render inputs')
+    stale.add_argument('plan', type=Path)
+    stamp = sub.add_parser('stamp', help='record render keys after rendering shots')
+    stamp.add_argument('plan', type=Path)
+    stamp.add_argument('--shot', action='append', required=True)
+    target = stamp.add_mutually_exclusive_group(required=True)
+    target.add_argument('--out', type=Path)
+    target.add_argument('--force', action='store_true', help='update the plan in place')
     args = parser.parse_args(argv)
     try:
         plan_path = args.plan.resolve()
         raw = plan_path.read_bytes()
         plan = json.loads(raw.decode('utf-8-sig'), parse_constant=reject_constant)
+        if args.command == 'diff':
+            old_path = args.old.resolve()
+            old = json.loads(old_path.read_text(encoding='utf-8-sig'), parse_constant=reject_constant)
+            result = plan_diff(old, plan, old_path.parent, plan_path.parent)
+            print(json.dumps({'ok': True, **result}, ensure_ascii=False, indent=2))
+            return 0
+        if args.command == 'stale':
+            print(json.dumps({'ok': True, **stale_report(plan, plan_path.parent)}, ensure_ascii=False, indent=2))
+            return 0
+        if args.command == 'stamp':
+            stamped = stamp_shots(plan, plan_path.parent, args.shot)
+            out = plan_path if args.force else args.out
+            # --out creates a new file only; --force is the explicit in-place update.
+            with out.open('w' if args.force else 'x', encoding='utf-8') as stream:
+                json.dump(plan, stream, ensure_ascii=False, indent=2, allow_nan=False)
+                stream.write('\n')
+            print(json.dumps({'ok': True, 'stamped': stamped, 'out': str(out)}, ensure_ascii=False, indent=2))
+            return 0
         ready = args.command == 'export' or args.ready
         errors = validate(plan, plan_path.parent, ready)
         if errors:

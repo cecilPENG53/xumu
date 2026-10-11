@@ -8,6 +8,7 @@
 - 输出到 `edit/animations/<shot-id>/` 或 `edit/assets/`，依赖装在项目内。外部组件与素材记录来源与许可，商用按各资产的许可处理。
 - 全片共用一份只读设计规范：色板、字体文件、字号层级、弹簧档位、避开清单。每个镜头从它取值。
 - 渲染遵守 [确定性渲染](style-stack.md#3-渲染引擎)。每个镜头按"静帧 → 短测 → 正式渲染 → 验收"推进，通过后进主片。
+- 镜头的源文件、共享设计规范与素材写进该镜头的 `inputs`，可调值放 `props`，跟字的内部时刻放 `inner_cues`；正式渲染验收后运行 `plan_tools.py stamp`，之后的修改才能判断哪些镜头可以复用。
 
 ## 口播剪辑链
 
@@ -19,7 +20,7 @@ Video Use 负责转录；剪辑点、拼接与时间表由 `voice_edit.py` 完�
 4. **拼接**：`voice_edit.py render edl_voice.json --out build/voice_cut.mp4`。每段按精确帧数和采样数截取、加 30ms 淡入淡出，再用 concat **滤镜**一次编码。concat demuxer 按时间戳拼接，会累计漂移（实测 2.4 秒），不用于这一步。
 5. **时间表**：`voice_edit.py cues edl_voice.json --transcripts transcripts --out-dir <edit>` 生成 `cue_chars.json`、`sections.json`，之后的画面时间都用 [时间引用](timeline.md#时间引用)。
 
-修改剪辑时只改 `keeps.json`，按 2 → 5 重跑，再 `cue.py sync`。
+修改剪辑时只改 `keeps.json`，按 2 → 5 重跑，再 `cue.py sync --revision <新版本>`，用 `plan_tools.py diff` 列出要重渲的镜头，其余复用（见 [改动影响与渲染缓存](timeline.md#改动影响与渲染缓存)）。
 
 ## A. 原片与 B-roll 素材
 

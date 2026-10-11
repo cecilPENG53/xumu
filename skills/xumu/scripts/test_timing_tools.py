@@ -101,6 +101,11 @@ class CueTests(unittest.TestCase):
         self.assertEqual(t.seconds({'cue': '看地图', 'offset': 0.5}), 5.5)
         self.assertAlmostEqual(t.total(), 9.5)
 
+    def test_single_character_cue(self):
+        t = self.timing()
+        self.assertEqual(t.seconds({'cue': '图', 'section': 'B1', 'occurrence': 2}), 5.5)
+        self.assertFalse(t.warnings)
+
     def test_prefix_fallback_warns(self):
         t = self.timing()
         self.assertEqual(t.seconds({'cue': '看地铁'}), 2.0)
@@ -121,7 +126,35 @@ class CueTests(unittest.TestCase):
         self.assertEqual(new['shots'][0]['status'], 'rendered')
         self.assertEqual(new['shots'][1], plan['shots'][1])
         self.assertEqual([c['id'] for c in changes], ['s1'])
+        self.assertEqual(changes[0]['kind'], 'retimed')
         self.assertEqual(plan['shots'][0]['from_frame'], 0)
+
+    def test_sync_resolves_inner_cues_relative_to_shot(self):
+        plan = {'shots': [{'id': 's1', 'status': 'verified', 'from_frame': 0, 'duration_frames': 10,
+                           'anchor': {'start': {'cue': '看地图'}, 'frames': 120},
+                           'inner_cues': {'second_map': {'cue': '看地图', 'occurrence': 2}}}]}
+        new, changes = sync_plan(plan, self.timing())
+        self.assertEqual(new['shots'][0]['from_frame'], 60)
+        self.assertEqual(new['shots'][0]['inner_frames'], {'second_map': 75})
+        # A cut that only shifts the whole shot keeps its inner frames, so the render key holds.
+        timing = self.timing({'fps': 30, 'inserts': [{'id': 'm', 'after_section': 'O1', 'frames': 30}]})
+        again, changes = sync_plan(new, timing)
+        self.assertEqual(again['shots'][0]['from_frame'], 90)
+        self.assertEqual(again['shots'][0]['inner_frames'], {'second_map': 75})
+        self.assertEqual(changes[0]['kind'], 'moved')
+        self.assertNotIn('inner_frames', changes[0])
+
+    def test_sync_revision_moves_plan_not_media_bindings(self):
+        plan = {'timeline': {'revision': 'r1'},
+                'shots': [{'id': 's1', 'timeline_revision': 'r1',
+                           'asset': {'file': 'a.mp4', 'timeline_revision': 'r1', 'alpha': False}}],
+                'sfx': [{'id': 'fx', 'timeline_revision': 'r1'}]}
+        new, changes = sync_plan(plan, self.timing(), revision='r2')
+        self.assertEqual(new['timeline']['revision'], 'r2')
+        self.assertEqual(new['shots'][0]['timeline_revision'], 'r2')
+        self.assertEqual(new['sfx'][0]['timeline_revision'], 'r2')
+        self.assertEqual(new['shots'][0]['asset']['timeline_revision'], 'r1')
+        self.assertEqual(changes[-1]['revision'], {'from': 'r1', 'to': 'r2'})
 
 
 if __name__ == '__main__':

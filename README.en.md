@@ -7,7 +7,7 @@
 
 ![GitHub stars](https://img.shields.io/github/stars/cecilPENG53/xumu?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.5.0-orange?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.5.1-orange?style=flat-square)
 ![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
 ![Remotion](https://img.shields.io/badge/Remotion-MG-0B84F3?style=flat-square)
 ![Claude](https://img.shields.io/badge/Claude-Supported-D97757?style=flat-square)
@@ -93,6 +93,7 @@ A pack of **3 skills**. Normally you only start from the director entry point; i
 - 📚 **Learning mode**: send it editing examples, style references or tutorials; it distills them into technique cards that are reused when content matches
 - 🔎 **Motion reference search** (optional): one command downloads 637 effect cards and HyperFrames component metadata, searchable with Chinese or English keywords
 - 🧱 **One master timeline**: `visual-plan.json` + `plan_tools.py` structural checks and hand-off manifest export
+- ♻️ **Change one thing, not the whole film**: each shot records a render fingerprint; after an edit, `plan_tools.py diff` lists which shots need re-rendering and which only moved and can be reused; word-synced moments inside a shot follow the cut
 - 🔌 **HyperFrames**: can be the main composition engine (e.g. the whiteboard one-take); otherwise used on demand for behind-subject captions, effects Shotcraft lacks, or music/SFX, always under Xumu's control
 - 🛠 **One-command setup**: `setup_env.py` detects and installs FFmpeg, Python deps and faster-whisper, and checks Node.js; it test-loads the transcription model in a separate process and repairs the ctranslate2 crash seen on some Windows PCs
 

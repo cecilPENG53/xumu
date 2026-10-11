@@ -7,7 +7,7 @@
 
 ![GitHub stars](https://img.shields.io/github/stars/cecilPENG53/xumu?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.5.0-orange?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.5.1-orange?style=flat-square)
 ![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
 ![Remotion](https://img.shields.io/badge/Remotion-MG-0B84F3?style=flat-square)
 ![Claude](https://img.shields.io/badge/Claude-支持-D97757?style=flat-square)
@@ -93,6 +93,7 @@ flowchart LR
 - 📚 **学习模式**：把喜欢的剪辑视频、风格案例或教程发给它，归纳成"手法卡"，以后按内容自动调用
 - 🔎 **动效参考检索**（可选）：一条命令下载 637 张动效卡与 HyperFrames 组件说明，用中文关键词检索
 - 🧱 **唯一主时间线**：`visual-plan.json` + `plan_tools.py` 结构检查与交接清单导出
+- ♻️ **改一处不重做整片**：每个镜头记录渲染指纹，修改后 `plan_tools.py diff` 列出哪些镜头要重渲、哪些只挪位置可复用；剪辑后镜头内部跟字的时刻自动顺延
 - 🔌 **HyperFrames**：可作主合成引擎（如白板一镜到底）；另在「背后字幕 / Shotcraft 缺的效果 / 配乐音效」三种情况下按需调用，始终由序幕总控
 - 🛠 **一键环境**：`setup_env.py` 自动检测并安装 FFmpeg、Python 依赖、faster-whisper，检查 Node.js；在独立进程里试加载转录模型，遇到部分 Windows 电脑上的 ctranslate2 崩溃会自动改装可用版本
 

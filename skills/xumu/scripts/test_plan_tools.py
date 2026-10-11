@@ -7,7 +7,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from plan_tools import export_manifest, main, validate
+from plan_tools import export_manifest, main, plan_diff, stale_report, stamp_shots, validate
 
 
 def example():
@@ -227,6 +227,109 @@ class PlanTests(unittest.TestCase):
     def test_no_narration_cannot_reference_audio(self):
         self.plan['narration']['file'] = '声音.bin'
         self.assertTrue(self.errors(True))
+
+
+class RenderCacheTests(unittest.TestCase):
+    """Render keys decide which shot files survive an edit; only re-rendered shots should change."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix='xumu-cache-test-')
+        self.root = Path(self.temp.name)
+        self.addCleanup(self.temp.cleanup)
+        source = self.root / 'shots' / 's1'
+        (source / 'node_modules').mkdir(parents=True)
+        (source / 'scene.tsx').write_text('export const Scene = 1;', encoding='utf-8')
+        (source / 'node_modules' / 'dep.js').write_text('v1', encoding='utf-8')
+        # The rendered file sits inside the input folder on purpose: it must not count as input.
+        (source / 'render.mp4').write_bytes(b'synthetic render')
+        self.plan = example()
+        shot = self.plan['shots'][0]
+        shot.update(inputs=['shots/s1'], props={'title': '收集 → 分类'})
+        shot['asset']['file'] = 'shots/s1/render.mp4'
+
+    def stamped(self):
+        stamp_shots(self.plan, self.root, ['s1'])
+        return copy.deepcopy(self.plan)
+
+    def test_stamped_asset_survives_revision_bump(self):
+        self.stamped()
+        self.plan['timeline']['revision'] = 'v2'
+        self.plan['shots'][0]['timeline_revision'] = 'v2'
+        self.assertEqual(validate(self.plan, self.root, True), [])
+        self.assertEqual(stale_report(self.plan, self.root)['fresh'], ['s1'])
+
+    def test_outputs_and_tool_folders_do_not_change_key(self):
+        self.stamped()
+        (self.root / 'shots' / 's1' / 'render.mp4').write_bytes(b're-encoded render')
+        (self.root / 'shots' / 's1' / 'node_modules' / 'dep.js').write_text('v2', encoding='utf-8')
+        self.assertEqual(stale_report(self.plan, self.root)['fresh'], ['s1'])
+
+    def test_source_edit_makes_asset_stale(self):
+        self.stamped()
+        (self.root / 'shots' / 's1' / 'scene.tsx').write_text('export const Scene = 2;', encoding='utf-8')
+        stale = stale_report(self.plan, self.root)['stale']
+        self.assertEqual(stale, [{'id': 's1', 'reasons': ['input changed: shots/s1']}])
+        self.assertTrue(any('stale, re-render' in e for e in validate(self.plan, self.root, True)))
+
+    def test_props_and_inner_frames_are_render_inputs(self):
+        self.stamped()
+        self.plan['shots'][0]['props']['title'] = '收集 → 归档'
+        self.plan['shots'][0]['inner_frames'] = {'hit': 12}
+        reasons = stale_report(self.plan, self.root)['stale'][0]['reasons']
+        self.assertEqual(reasons, ['props changed', 'inner_frames changed'])
+
+    def test_missing_input_is_reported(self):
+        self.stamped()
+        self.plan['shots'][0]['inputs'] = ['shots/absent']
+        self.assertTrue(any('input does not exist' in e for e in validate(self.plan, self.root)))
+
+    def test_diff_separates_reuse_from_rerender(self):
+        old = self.stamped()
+        second = copy.deepcopy(old['shots'][0])
+        second.update(id='s2', role='overlay', from_frame=10, duration_frames=45, inputs=[])
+        second['asset'] = {'file': 'shots/s1/render.mp4', 'timeline_revision': 'v1', 'alpha': True}
+        old['shots'].append(second)
+        self.plan = old
+        stamp_shots(self.plan, self.root, ['s2'])
+        old = copy.deepcopy(self.plan)
+        new = copy.deepcopy(old)
+        new['shots'][0]['from_frame'] = 5                                   # moved, same length
+        new['shots'][1]['duration_frames'] = 60                             # longer: render again
+        new['shots'].append(dict(copy.deepcopy(second), id='s3'))
+        new['sfx'] = [{'id': 'fx1', 'shot_id': 's1'}]
+        report = plan_diff(old, new, self.root, self.root)
+        self.assertEqual(report['reuse_moved'], [{'id': 's1', 'from': [0, 90], 'to': [5, 90]}])
+        self.assertEqual(report['rerender'], [{'id': 's2', 'reasons': ['duration_frames: 45 -> 60']}])
+        self.assertEqual(report['added'], ['s3'])
+        self.assertEqual(report['composite'], ['sfx changed: fx1'])
+        self.assertTrue(report['recomposite'])
+
+    def test_diff_without_key_compares_plan_fields_only(self):
+        old = copy.deepcopy(self.plan)
+        new = copy.deepcopy(old)
+        report = plan_diff(old, new, self.root, self.root)
+        self.assertEqual(report['unverified'][0]['id'], 's1')
+        self.assertTrue(report['recomposite'])
+        new['shots'][0]['screen_text'] = '新文案'
+        report = plan_diff(old, new, self.root, self.root)
+        self.assertEqual(report['rerender'], [{'id': 's1', 'reasons': ['screen_text changed']}])
+
+    def test_diff_of_identical_stamped_plans_needs_nothing(self):
+        old = self.stamped()
+        report = plan_diff(old, copy.deepcopy(old), self.root, self.root)
+        self.assertEqual(report['unchanged'], ['s1'])
+        self.assertFalse(report['recomposite'])
+
+    def test_cli_stamp_needs_out_or_force(self):
+        source, output = self.root / 'plan.json', self.root / 'stamped.json'
+        source.write_text(json.dumps(self.plan, ensure_ascii=False), encoding='utf-8')
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(main(['stamp', str(source), '--shot', 's1', '--out', str(output)]), 0)
+            self.assertEqual(main(['stamp', str(source), '--shot', 's1', '--out', str(output)]), 1)
+            self.assertNotIn('render_key', json.loads(source.read_text(encoding='utf-8'))['shots'][0]['asset'])
+            self.assertEqual(main(['stamp', str(source), '--shot', 's1', '--force']), 0)
+            self.assertEqual(main(['stamp', str(source), '--shot', 'absent', '--force']), 1)
+        self.assertIn('render_key', json.loads(source.read_text(encoding='utf-8'))['shots'][0]['asset'])
 
 
 if __name__ == '__main__':
