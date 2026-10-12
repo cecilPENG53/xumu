@@ -133,11 +133,13 @@ Full version (Chinese): **[docs/USAGE.md](./docs/USAGE.md)**.
 | GPT (Codex) | Supported | Place in `~/.codex/skills/`; trigger with `$xumu` |
 | Doubao | Usable | Requires an agent / coding mode that can read/write files and run commands |
 | Cursor / other AI agents | Usable | Must be able to read/write files and run shell commands |
-| Plain chat | Not recommended | No file system or shell, so no editing or rendering |
+| Web / app chat (ChatGPT, Claude web, etc.) | **Not supported** | Editing and rendering run on your computer, so the web apps can neither install nor run it |
 
 > One rule decides it: **can your AI read/write files and run commands on your computer?** If yes, it can run Xumu.
 
 ## Installation
+
+> ⚠️ **Desktop only.** Do not upload the zip from GitHub to a web app's Skills page, and do not ask a web chat AI to install it; both fail.
 
 ### Option 1: send this to your AI (universal, recommended)
 
