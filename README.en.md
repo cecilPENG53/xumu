@@ -7,7 +7,7 @@
 
 ![GitHub stars](https://img.shields.io/github/stars/cecilPENG53/xumu?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.5.1-orange?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.6.0-orange?style=flat-square)
 ![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
 ![Remotion](https://img.shields.io/badge/Remotion-MG-0B84F3?style=flat-square)
 ![Claude](https://img.shields.io/badge/Claude-Supported-D97757?style=flat-square)
@@ -123,7 +123,7 @@ Full version (Chinese): **[docs/USAGE.md](./docs/USAGE.md)**.
 3. **Source footage is never overwritten**: all outputs go to `edit/` next to your footage, or `outputs/<project-name>/edit/`.
 4. **Permissions stay scoped**: publishing, voice cloning, uploading media and paid generation each need your separate approval; API keys live only in environment variables, never in plans or logs.
 5. **Bring your own licensed audio**: this repo ships **no** third-party music or SFX.
-6. **Judge real renders**: a passing `plan_tools.py check` means the structure is valid, not that the video is good.
+6. **Judge real renders**: a passing `plan_tools.py check` means the structure is valid, not that the video is good; a matching transcript doesn't mean the voice sounds smooth, so unheard audio is reported as "awaiting a listen".
 
 ## Platform support
 
@@ -226,7 +226,7 @@ Each video project produces, under `edit/` (generated as needed, never pre-fille
 | `visual-plan.json` | **The one master timeline**: frame-level timing and shots |
 | `assets.json` | Asset sources and licenses |
 | `shots/<shot_id>/` | One folder per shot; custom MG includes `brief.md` |
-| `verify/` | QA evidence |
+| `verify/` | QA evidence; `verify/listen/` holds a listening reel of cut points and suspected stumbles |
 
 ## License & credits
 

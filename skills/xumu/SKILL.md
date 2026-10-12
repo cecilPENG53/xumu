@@ -2,7 +2,7 @@
 name: xumu
 description: 序幕（口播成片助手）：把口播视频、录音或文案做成解说视频。先定平台、内容、风格与时长，再剪辑旁白，按内容从 Video Shotcraft 选镜头、从手法库调用学过的手法，按风格选绘制技术（SVG、Canvas、WebGL、Three.js、p5、Manim、人物抠像等）制作 B-roll 与 MG，最后合成验收。支持短篇与章节式长片。也用于学习用户发来的剪辑视频、风格案例或教程，归纳成手法卡入库。用于成片、B-roll/动效设计、动态包装或学习剪辑手法；只转录、润色文案或选题研究时不走完整流程。
 metadata:
-  version: "0.5.1"
+  version: "0.6.0"
 ---
 
 # 序幕
@@ -40,7 +40,7 @@ metadata:
 
 ### 2. 锁定旁白与主时间线
 
-按输入模式执行。原始逐字转录和原文单独保存，屏幕文案另记。口播剪辑用 `voice_edit.py`：锚点保留表 → 帧对齐 EDL → 帧精确拼接 → 逐字时间表（见 [制作路线与合成](references/production.md#口播剪辑链)）。实际旁白定下后再锁帧级时长；无旁白的片子按阅读与动作时长排帧。剪辑修订时重跑剪辑链，用 `cue.py sync --revision` 刷新镜头帧位并递增 revision，再用 `plan_tools.py diff` 列出要重渲的镜头，其余复用（见 [改动影响与渲染缓存](references/timeline.md#改动影响与渲染缓存)）。
+按输入模式执行。原始逐字转录和原文单独保存，屏幕文案另记。口播剪辑用 `voice_edit.py`：锚点保留表 → 帧对齐 EDL → 核对停顿表与疑点 → 帧精确拼接 → 试听 → 逐字时间表（见 [制作路线与合成](references/production.md#口播剪辑链)）。卡壳不只是静音，按 [卡壳诊断](references/production.md#卡壳诊断) 分类处理。**声音先过关**：剪点与疑点的试听合集听过（自己不能听时交用户确认）之后，再做依赖它的字幕和画面。实际旁白定下后再锁帧级时长；无旁白的片子按阅读与动作时长排帧。剪辑修订时重跑剪辑链，用 `cue.py sync --revision` 刷新镜头帧位并递增 revision，再用 `plan_tools.py diff` 列出要重渲的镜头，其余复用（见 [改动影响与渲染缓存](references/timeline.md#改动影响与渲染缓存)）。
 
 ### 3. 画面方案 → 用户确认
 
@@ -100,6 +100,7 @@ python <skill>/scripts/plan_tools.py stale <edit>/visual-plan.json   # 哪些镜
 ```text
 python <skill>/scripts/voice_edit.py edl <edit>/keeps.json --out <edit>/edl_voice.json --report <edit>/剪后口播_核对.txt
 python <skill>/scripts/voice_edit.py render <edit>/edl_voice.json --out <edit>/build/voice_cut.mp4 [--size 1080x1920]
+python <skill>/scripts/voice_edit.py listen <edit>/edl_voice.json --video <edit>/build/voice_cut.mp4 --out-dir <edit>/verify/listen [--at 0:52] [--with-source]
 python <skill>/scripts/voice_edit.py cues <edit>/edl_voice.json --transcripts <edit>/transcripts --out-dir <edit>
 python <skill>/scripts/cue.py --edit <edit> resolve '{"cue": "跟地图", "section": "B09", "offset": 2.4}'
 python <skill>/scripts/cue.py --edit <edit> sync <edit>/visual-plan.json --out <edit>/visual-plan.r2.json --revision r2
