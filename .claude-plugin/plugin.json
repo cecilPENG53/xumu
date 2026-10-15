@@ -1,6 +1,6 @@
 {
   "name": "xumu",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "序幕（口播成片助手）：口播视频/录音/文案 → 解说成片。含 xumu 总控、Video Use 剪辑 helper、Video Shotcraft 镜头卡库；含定制 MG 灵感索引、确定性渲染契约、54 种风格目录与解说语法、帧精确口播剪辑链、白板一镜到底模板与学习模式，可调用已安装的 HyperFrames。",
   "author": {
     "name": "VVAI",
