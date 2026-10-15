@@ -2,7 +2,8 @@
 """Searchable index over external motion libraries (read-only references), queried in Chinese or English.
 
   fetch   download the read-only references into the refs dir (git clone + registry metadata; needs network)
-  build   gongnyang/awesome-ai-motion index.json + HyperFrames registry item metadata  ->  motion-index.json
+  build   gongnyang/awesome-ai-motion index.json + HyperFrames registry item metadata
+          + mg-styles-15 style prompts                                                  ->  motion-index.json
   search  Chinese or English keywords -> ranked effects, recipes, blocks and components
   show    one entry with its parameters, usage notes and local/online paths
 
@@ -11,6 +12,8 @@ Sources:
   gn:<slug>        gongnyang effect card (definition, conveys, use/avoid, params, HyperFrames notes)  MIT
   gn-recipe:<slug> gongnyang recipe (ordered effect sequence)                                          MIT
   hf:<name>        HyperFrames registry block/component (install into a HyperFrames project)          Apache-2.0
+  mg15:<id>        Vincentwei1021/mg-styles-15 style: signature features, techniques, route, reference
+                   10 s film, full prompt and deterministic source (renderAt(t))                       MIT
 """
 import argparse
 from concurrent.futures import ThreadPoolExecutor
@@ -79,6 +82,10 @@ SYNONYMS = {
     '压力': ['overwhelm', 'pressure', 'pileup', 'surround'], '问题': ['problem', 'question'], '证据': ['proof', 'evidence', 'source', '데이터 증명'],
     '新闻': ['news', 'editorial', 'ticker', 'journalism'], '杂志': ['editorial', 'magazine'], '电影': ['cinematic', 'film', 'anamorphic'],
     '品牌': ['brand', 'logo', 'wordmark', '브랜딩'], '氛围': ['ambient', 'atmosphere', '분위기'], '数学': ['math', 'geometry', 'vector', 'fourier', 'plane'],
+    '风格': ['style'], '综艺': ['variety', 'hanazi', 'caption'], '花字': ['hanazi', 'variety', 'caption'],
+    '科普': ['explainer', 'paperclip', 'science'], '形变': ['morph', 'morphing', 'shape-morph'], '液态': ['liquid', 'metaball', 'fluid'],
+    '线条': ['line', 'line-art', 'stroke', 'draw-on'], '一笔画': ['line-art', 'one-line', 'draw-on'],
+    '扁平': ['flat', 'vector', 'flat-vector'], '包豪斯': ['bauhaus', 'geometric', 'konstruktion'],
 }
 
 TOKEN = re.compile(r'[a-z0-9][a-z0-9\-]*|[ㄱ-힝]+|[一-鿿]+', re.I)
@@ -92,7 +99,14 @@ def refs_config():
 
 
 REPOS = {'awesome-ai-motion': 'https://github.com/gongnyang/awesome-ai-motion.git',
-         'bang-motion': 'https://github.com/bangtutorial/bang-motion.git'}
+         'bang-motion': 'https://github.com/bangtutorial/bang-motion.git',
+         'mg-styles-15': 'https://github.com/Vincentwei1021/mg-styles-15.git'}
+# Large repos are cloned sparsely: prompts and source only, no films, HDRIs, meshes or instrument samples.
+SPARSE = {'mg-styles-15': ['/prompts/', '/demos/', '/harness/', '/lib/audio/', '!/lib/audio/samples/', '/template.md',
+                           '/rubric.md', '/README.md', '/README.zh-CN.md', '/LICENSE', '/assets/fonts/']}
+MG15_FILMS = 'https://vincentwei1021.github.io/mg-styles-15/?lang=zh#'
+MG15_REPO = 'https://github.com/Vincentwei1021/mg-styles-15/blob/main/'
+CJK = re.compile(r'[\u3400-\u9fff]')
 HF_RAW = 'https://raw.githubusercontent.com/heygen-com/hyperframes/main/registry'
 
 
@@ -115,11 +129,12 @@ def source_paths():
     cfg, root = refs_config(), refs_dir()
     gn = Path(cfg['gongnyang']) if cfg.get('gongnyang') else root / 'awesome-ai-motion'
     hf = Path(cfg['hyperframes_registry']) if cfg.get('hyperframes_registry') else root / 'hyperframes-registry'
-    return gn, hf
+    mg = Path(cfg['mg_styles']) if cfg.get('mg_styles') else root / 'mg-styles-15'
+    return gn, hf, mg
 
 
 def fetch(root):
-    """Shallow-clone the two reference repos and download HyperFrames registry item metadata (small JSON only)."""
+    """Shallow-clone the reference repos and download HyperFrames registry item metadata (small JSON only)."""
     root.mkdir(parents=True, exist_ok=True)
     done = {}
     for name, url in REPOS.items():
@@ -127,6 +142,11 @@ def fetch(root):
         if (target / '.git').exists():
             subprocess.run(['git', '-C', str(target), 'pull', '--ff-only', '-q'], check=True)
             done[name] = 'updated'
+        elif name in SPARSE:
+            subprocess.run(['git', 'clone', '--depth', '1', '-q', '--filter=blob:none', '--sparse', url, str(target)],
+                           check=True)
+            subprocess.run(['git', '-C', str(target), 'sparse-checkout', 'set', '--no-cone', *SPARSE[name]], check=True)
+            done[name] = 'cloned (prompts and source only)'
         else:
             subprocess.run(['git', 'clone', '--depth', '1', '-q', url, str(target)], check=True)
             done[name] = 'cloned'
@@ -153,7 +173,55 @@ def fetch(root):
     return {'refs': str(root), 'sources': done, 'failures': failures[:10]}
 
 
-def build(gn_root, hf_root):
+def split_title(title):
+    """'粗描边贴纸人科普 MG（回形针风格） Bold-outline Sticker Explainer' -> (Chinese name, English name).
+    A Chinese name may end in Latin tokens that the English name repeats: '等轴 2.5D Isometric / 2.5D'."""
+    last = max((m.end() for m in CJK.finditer(title)), default=0)
+    if title[last:last + 1] == '）':
+        last += 1
+    zh, tail = title[:last].strip(), title[last:].split()
+    for k in range(len(tail) - 1, 0, -1):
+        extra, rest = ' '.join(tail[:k]), ' '.join(tail[k:])
+        if extra in rest and not any(c.islower() for c in extra):       # acronyms only: 2.5D, HUD / FUI
+            return f'{zh} {extra}', rest
+    return zh, ' '.join(tail)
+
+
+def parse_mg_prompt(path):
+    """One mg-styles-15 prompt file -> index entry. Signature features are what the reference film is judged on."""
+    text = path.read_text(encoding='utf-8')
+    zh, en = split_title(text.splitlines()[0].lstrip('# ').strip())
+
+    def section(name):
+        m = re.search(rf'^# {name}[^\n]*\n(.*?)(?=^# |^```)', text, re.S | re.M)
+        return m.group(1).strip() if m else ''
+
+    film = re.search(r'\*\*原片\*\*：(.+)', text)
+    route = section('Suggested technical route').split('\n(You may')[0].strip()
+    signature = section('Signature features')
+    origin, features, techniques = [], [], []
+    for line in signature.splitlines():
+        line = line.strip()
+        if line.startswith('视觉特征'):
+            features = [f.strip() for f in line[4:].split(',') if f.strip()]
+        elif line.startswith('关键技法'):
+            techniques.append(line[4:].strip())
+        elif techniques:
+            techniques.append(line)
+        elif line:
+            origin.append(line)
+    output = section('Output').lstrip('- ').replace('\n  ', ' ')
+    stem = path.stem
+    return {
+        'id': f'mg15:{stem}', 'source': 'mg-styles-15', 'kind': 'style', 'name': en, 'name_local': zh,
+        'summary': ' '.join(origin), 'tags': features, 'techniques': techniques, 'route': route, 'output': output,
+        'film': film.group(1).strip() if film else None, 'preview_url': MG15_FILMS + stem,
+        'doc': str(path), 'source_dir': str(path.parent.parent / 'demos' / stem),
+        'prompt_url': f'{MG15_REPO}prompts/{stem}.md', 'license': 'MIT',
+    }
+
+
+def build(gn_root, hf_root, mg_root=None):
     entries = []
     if gn_root:
         data = json.loads((gn_root / 'index.json').read_text(encoding='utf-8'))
@@ -192,14 +260,17 @@ def build(gn_root, hf_root):
                 'controls': [c.get('name') for c in j.get('controls', []) if isinstance(c, dict)],
                 'doc': f'https://github.com/heygen-com/hyperframes/tree/main/registry/{folder}/{j["name"]}',
             })
-    return {'version': 1, 'counts': {s: sum(e['source'] == s for e in entries) for s in ('gongnyang', 'hyperframes')},
-            'entries': entries}
+    if mg_root:
+        entries += [parse_mg_prompt(path) for path in sorted((mg_root / 'prompts').glob('*.md'))]
+    sources = ('gongnyang', 'hyperframes', 'mg-styles-15')
+    return {'version': 1, 'counts': {s: sum(e['source'] == s for e in entries) for s in sources}, 'entries': entries}
 
 
 def haystack(e):
     parts = [e['id'], e.get('name') or '', e.get('name_local') or '', e.get('family') or '', e.get('summary') or '',
              e.get('conveys') or '', ' '.join(e.get('tags', [])), ' '.join(e.get('purposes', [])),
-             ' '.join(e.get('media', [])), ' '.join(e.get('use_when', []) if isinstance(e.get('use_when'), list) else [])]
+             ' '.join(e.get('media', [])), ' '.join(e.get('use_when', []) if isinstance(e.get('use_when'), list) else []),
+             ' '.join(e.get('techniques', [])), e.get('route') or '']
     return ' '.join(parts).lower()
 
 
@@ -222,14 +293,15 @@ def search(index, terms, source=None, kind=None, limit=15):
             continue
         text = haystack(e)
         tokens = set(TOKEN.findall(text))
-        name = ((e.get('name') or '') + ' ' + e['id']).lower()
+        name = ((e.get('name') or '') + ' ' + (e.get('name_local') or '') + ' ' + e['id']).lower()
         purposes = set(e.get('purposes') or [])
         tags = ' '.join(e.get('tags', [])).lower()
         score, matched = 0.0, 0
         for group in groups:
             best, hits = 0.0, 0
             for w in group:
-                if w in tokens or (len(w) > 3 and w in text):
+                # Chinese has no spaces: a CJK term of two or more characters matches as a substring.
+                if w in tokens or (len(w) > 3 and w in text) or (len(w) > 1 and CJK.match(w) and w in text):
                     hits += 1
                     weight = 3.0 if (w in name or w in purposes) else (2.0 if w in tags else 1.0)
                     best = max(best, weight)
@@ -253,11 +325,12 @@ def main(argv=None):
     p = sub.add_parser('build')
     p.add_argument('--gongnyang', type=Path)
     p.add_argument('--hyperframes', type=Path, help='dir with items/*.json (registry-item metadata)')
+    p.add_argument('--mg-styles', type=Path, help='mg-styles-15 checkout (prompts/*.md)')
     p.add_argument('--force', action='store_true')
     p = sub.add_parser('search')
     p.add_argument('terms', nargs='+')
-    p.add_argument('--source', choices=['gongnyang', 'hyperframes', 'gn', 'gn-recipe', 'hf'])
-    p.add_argument('--kind', choices=['effect', 'recipe', 'block', 'component'])
+    p.add_argument('--source', choices=['gongnyang', 'hyperframes', 'mg-styles-15', 'gn', 'gn-recipe', 'hf', 'mg15'])
+    p.add_argument('--kind', choices=['effect', 'recipe', 'block', 'component', 'style'])
     p.add_argument('--limit', type=int, default=15)
     p = sub.add_parser('show')
     p.add_argument('ids', nargs='+')
@@ -267,19 +340,20 @@ def main(argv=None):
         if args.command == 'fetch':
             result = fetch(args.dest or refs_dir())
         elif args.command == 'build':
-            default_gn, default_hf = source_paths()
+            default_gn, default_hf, default_mg = source_paths()
             gn = args.gongnyang or (default_gn if (default_gn / 'index.json').exists() else None)
             hf = args.hyperframes or (default_hf if (default_hf / 'items').is_dir() else None)
-            if not gn and not hf:
+            mg = args.mg_styles or (default_mg if (default_mg / 'prompts').is_dir() else None)
+            if not gn and not hf and not mg:
                 raise ValueError(f'no reference sources under {refs_dir()}; run: motion_index.py fetch')
-            index = build(gn, hf)
+            index = build(gn, hf, mg)
             with index_path.open('w' if args.force else 'x', encoding='utf-8') as stream:
                 json.dump(index, stream, ensure_ascii=False)
             result = {'index': str(index_path), 'counts': index['counts'], 'entries': len(index['entries'])}
         else:
             index = json.loads(index_path.read_text(encoding='utf-8'))
             if args.command == 'search':
-                source = {'gn': 'gn:', 'gn-recipe': 'gn-recipe:', 'hf': 'hf:'}.get(args.source, args.source)
+                source = {'gn': 'gn:', 'gn-recipe': 'gn-recipe:', 'hf': 'hf:', 'mg15': 'mg15:'}.get(args.source, args.source)
                 result = {'results': search(index, args.terms, source, args.kind, args.limit)}
             else:
                 by_id = {e['id']: e for e in index['entries']}

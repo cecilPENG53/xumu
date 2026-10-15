@@ -7,7 +7,7 @@
 
 ![GitHub stars](https://img.shields.io/github/stars/cecilPENG53/xumu?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.6.1-orange?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.7.0-orange?style=flat-square)
 ![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
 ![Remotion](https://img.shields.io/badge/Remotion-MG-0B84F3?style=flat-square)
 ![Claude](https://img.shields.io/badge/Claude-支持-D97757?style=flat-square)
@@ -24,7 +24,7 @@
 - **先想清楚再动手**：平台 × 内容 × 风格 × 时长的制作定位，决定叙事结构、剪辑策略和镜头强弱。
 - **不把所有内容都变成卡片**：保留人物、不加动画也是有效决策；需要动态呈现的段落才去选镜头。
 - **镜头有出处**：从 157 张电影感镜头配方卡里比较首选与备选，确有表达缺口才写定制 MG。
-- **风格与讲法有章法**：54 种画面风格目录 + 解说语法表，把"这句话在做什么"（定义、对比、步骤、数据……）对应到具体画面和现成组件。
+- **风格与讲法有章法**：60 种画面风格目录（15 种附参考成片与可检验的标志特征）+ 解说语法表，把"这句话在做什么"（定义、对比、步骤、数据……）对应到具体画面和现成组件。
 - **每一步可验证**：唯一主时间线、逐镜头小样验证、结构检查工具、真实渲染验收。
 
 > 由 **VVAI** 在实际口播视频制作中沉淀而成，整合并适配了 [Video Use](https://github.com/browser-use/video-use)（MIT）与 [Video Shotcraft](https://github.com/Vincentwei1021/video-shotcraft)（Apache-2.0）。
@@ -86,7 +86,7 @@ flowchart LR
 - ✂️ **原声剪辑**：逐字转录，按"从哪句到哪句"写保留表，剪点按音量对到真实停顿，帧精确拼接（音画误差不超过 1 帧）；ElevenLabs 可选，默认本地免费 faster-whisper
 - ⏱ **时间写成"哪句话 + 偏移"**：画面事件跟着口播走，插入开场或改剪辑后自动顺延，不用逐处改秒数
 - 🎞 **内容选镜头**：157 张 Shotcraft 镜头配方卡（开场、运镜、转场、数据、排版、节奏…），先比较首选与备选再定案
-- 🎨 **54 种画面风格**：教学解说、新闻纪实、界面产品、平面设计流派、插画手作、复古、科技、东方传统（水墨、剪纸、国潮）、三维等，每种写明观感、标志动作、适合内容和现成实现
+- 🎨 **60 种画面风格**：教学解说、新闻纪实、界面产品、平面设计流派、插画手作、复古、科技、东方传统（水墨、剪纸、国潮）、三维、综艺花字、贴纸科普等，每种写明观感、标志动作、适合内容和现成实现；其中 15 种可直接看 [mg-styles-15](https://github.com/Vincentwei1021/mg-styles-15) 的参考成片
 - 🗣 **解说语法**：20 种句子作用 → 画面组织方式 + 去 PPT 感清单 + 手机可读字号
 - 🧩 **白板一镜到底模板**：世界坐标镜头、画笔手、手绘显示器衔接真实录屏、圆形人像；已在 7 分钟成片中验证（HyperFrames）
 - ✨ **定制 MG**：32 条精选灵感索引 + brief 模板 + **逐帧确定性渲染契约**（画面只由帧号决定）
@@ -236,6 +236,7 @@ xumu/
 - VV 原创部分（`skills/xumu/`、仓库根目录文档与配置）以 [MIT](./LICENSE) 开源。
 - [`skills/video-use/`](./skills/video-use/) 来自 [browser-use/video-use](https://github.com/browser-use/video-use)，保留其 MIT 许可证。
 - [`skills/video-shotcraft/`](./skills/video-shotcraft/) 来自 [Vincentwei1021/video-shotcraft](https://github.com/Vincentwei1021/video-shotcraft)，保留其 Apache-2.0 许可证；原项目的 Mixkit 音效/音乐**未随本仓库分发**。
+- 风格参考片来自 [Vincentwei1021/mg-styles-15](https://github.com/Vincentwei1021/mg-styles-15)（MIT），按需用 `motion_index.py fetch` 下载到本机，不随本仓库分发。
 - 详见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。
 
 欢迎提 Issue 和 PR，参与方式见 [CONTRIBUTING.md](./CONTRIBUTING.md)。
