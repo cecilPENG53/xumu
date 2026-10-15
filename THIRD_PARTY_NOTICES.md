@@ -28,6 +28,7 @@
 | [bangtutorial/bang-motion](https://github.com/bangtutorial/bang-motion) | MIT | 解说风格分类、解说结构、去 PPT 感规则 |
 | [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) | Apache-2.0 | 组件库条目（`hf:` 编号）的名称与说明 |
 | [Kianzzz/xilo-opus-video](https://github.com/Kianzzz/xilo-opus-video) | MIT | 代码类型分工、风格到技术组合的思路、弹簧手感分档 |
+| [Vincentwei1021/mg-styles-15](https://github.com/Vincentwei1021/mg-styles-15) | MIT（素材为 CC0 / 公有领域，字形轮廓为 OFL） | 15 种风格的参考成片、提示词与源码（`mg15:` 编号）；风格目录中 6 个新条目与标志特征的整理 |
 
 `skills/xumu/assets/templates/whiteboard-world/` 为 VV 原创模板，随本仓库以 MIT 分发；它在运行时依赖使用者自行安装的 HyperFrames 与 GSAP。
 

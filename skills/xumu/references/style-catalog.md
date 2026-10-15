@@ -1,10 +1,10 @@
 # 风格目录：画面语言速查
 
-镜头的 `style` 字段取本目录的 key。选法与分层规则见 [风格与技术栈](style-stack.md)；句子级的画面组织见 [解说语法](explainer-grammar.md)；素材与字体的许可见 [素材来源](asset-sources.md)。表中 `gn:` / `hf:` 为 `motion_index.py` 可查的现成实现。
+镜头的 `style` 字段取本目录的 key。选法与分层规则见 [风格与技术栈](style-stack.md)；句子级的画面组织见 [解说语法](explainer-grammar.md)；素材与字体的许可见 [素材来源](asset-sources.md)。表中 `gn:` / `hf:` / `mg15:` 为 `motion_index.py` 可查的现成实现。
 
 每部片通常一个主风格加至多一个辅助风格。用户没指定时，从不同大类里挑 2–3 个拉开差别的方向，各配一张代表帧。需要新风格时，先在 project.md 写下 key、观感、标志动作与实现，再使用。
 
-标注说明：**已验证** = 在序幕实际成片中跑通；**有模板** = `assets/templates/` 下有可运行模板；**需素材** = 依赖生成图或授权图片，代码无法独立完成。其余风格目前只有目录条目与组件指引，首次实际使用时按 [风格与技术栈](style-stack.md#9-风格模板的沉淀) 沉淀模板。
+标注说明：**已验证** = 在序幕实际成片中跑通；**有模板** = `assets/templates/` 下有可运行模板；**需素材** = 依赖生成图或授权图片，代码无法独立完成；**有参考片** = [mg-styles-15](https://github.com/Vincentwei1021/mg-styles-15) 有这种风格的 10 秒参考成片、完整提示词、确定性源码和可检验的标志特征（`mg15:` 编号，用法见 [风格与技术栈](style-stack.md#10-风格参考片mg15)）。其余风格目前只有目录条目与组件指引，首次实际使用时按 [风格与技术栈](style-stack.md#9-风格模板的沉淀) 沉淀模板。
 
 ## A. 教学解说
 
@@ -15,7 +15,8 @@
 | `chalkboard` 黑板粉笔 | 墨绿或黑板底、粉笔纹理、手写 | 粉笔描画、擦除转场 | 课堂感、数学、复盘 | SVG 描边 + 粉笔纹理滤镜；`gn:line-boil` `gn:scribble-wipe` |
 | `notebook-doodle` 笔记本涂鸦 | 方格或横线纸、圆珠笔蓝、便利贴 | 涂鸦圈注、便利贴贴上、翻页 | 学习笔记、个人经验 | rough-notation；`hf:hw-underline` `hf:hw-callout-circle` `gn:page-turn` |
 | `flat-diagram` 扁平图解 | 浅底、SVG 分层图形、实体色块 | 实体保持身份，按阅读顺序登场 | 概念、机制、流程 | `hf:flowchart` `gn:progressive-disclosure` `gn:dashed-flow` |
-| `isometric` 等距 2.5D | 等距网格、立体方块、柔和阴影 | 分层抬升、爆炸拆解、镜头缓移 | 系统架构、产品结构、空间 | SVG 或 Three.js 正交相机；`gn:exploded-assembly` `gn:layer-separation` |
+| `isometric` 等距 2.5D **有参考片** | 等距网格、立体方块、柔和阴影 | 分层抬升、爆炸拆解、镜头缓移 | 系统架构、产品结构、空间 | SVG 或 Three.js 正交相机；`gn:exploded-assembly` `gn:layer-separation`；`mg15:03-isometric` |
+| `sticker-explainer` 贴纸科普（回形针式） **有参考片** | 冷静的蓝灰或米白底、照片抠图加粗白描边成"贴纸"、扁平图标与精确图表、等线字体 | 超大画布上一台镜头长缓动平移缩放，每句旁白带出一个新元素；柱状图生长、数字滚动、路线描出 | 硬核科普、财经、跨学科知识口播 | `mg15:19-paperclip` `gn:infinite-pan` `hf:data-chart`；照片 **需素材** |
 | `cartoon-collage` 卡通拼贴 | 米色纸纹、扁平插画剪贴、色块胶囊、手写 | 剪贴落地、近景 → 滑行 → 拉远 | 科普、轻教育 | 插画剪贴 **需素材**（Open Peeps 或生成后去背）；`hf:hw-box-label` |
 | `cartoon-stage` 卡通舞台 | 明亮扁平、一景一个舞台、关节角色、无字幕 | 角色动作讲故事，机器、水、植物自己动 | 有角色的科普、社会议题 | SVG 关节角色；`gn:character-articulation` `gn:walk-cycle` `hf:lottie-character-walk` |
 | `blueprint` 蓝图工程 | 蓝底白线、网格、尺寸标注、等宽字 | 线条描出结构、尺寸线展开、局部放大 | 产品原理、结构拆解、技术方案 | `gn:line-draw` `gn:outline-then-fill` `hf:svg-stroke-trace` |
@@ -38,7 +39,7 @@
 |---|---|---|---|---|
 | `clean-ui` 干净界面 | 真实截图或真实网页为底 | 镜头推到真实按钮；尺寸与圆角变化用弹簧 | 工具教程、产品功能 | `hf:ui-focus-zoom` `gn-recipe:product-demo` `hf:browser-device-stage` |
 | `white-catalog` 白底目录 | 白色网格、产品抠图、混排字体、涂鸦 | 网格逐格填入、盖章、日期块 | 产品介绍、品牌、合集盘点 | `hf:grid-card-assemble` `hf:mk-placeholder-grid` `gn:stamp-impact` |
-| `glass-ui` 液态玻璃 | 半透明玻璃卡片、柔光、模糊背景 | 卡片浮起、折射扫光 | 科技产品、苹果风界面 | `hf:vfx-liquid-glass` `hf:ios26-liquid-glass` `gn:glass-refraction` |
+| `glass-ui` 液态玻璃 / 弥散渐变 **有参考片** | 半透明玻璃卡片、柔光、模糊背景 | 卡片浮起、折射扫光 | 科技产品、苹果风界面 | `hf:vfx-liquid-glass` `hf:ios26-liquid-glass` `gn:glass-refraction`；`mg15:12-aurora-glass` |
 | `terminal-code` 终端代码 | 深色编辑器或终端、等宽字、语法高亮 | 打字、逐行高亮、diff 对比 | 编程、AI 工具、开发教程 | `hf:code-typing` `hf:code-diff` `hf:code-highlight` `hf:terminal-simulator` |
 | `brutalist-mono` 粗野等宽 | 黑白硬网格、等宽与窄体字、光标闪烁 | 硬切、方块位移、乱码解码 | 开发者、极客、冷观点 | `gn:hard-cut` `gn:hard-appearance` `hf:scramble-reveal` |
 
@@ -49,7 +50,9 @@
 | `kinetic-type` 大字排版 | 一屏一句、字号层级克制 | 遮罩揭示，在语义词处落定 | 观点、金句、章节标题 | `gn-recipe:title-opener` `hf:per-word-rise` `gn:mask-reveal` |
 | `poster-colorblock` 海报色块 | 大面积纯色场、超粗大字被画框裁切 | 色块擦除、字撞画框 | 观点冲击、口号、活动 | `hf:headline-slam` `hf:caption-kinetic-slam` `gn:kinetic-type-sweep` |
 | `swiss-grid` 瑞士国际主义 | 严格网格、无衬线、不对称、红黑白 | 沿网格滑入、对齐落定 | 理性分析、方法论、设计话题 | `gn:grid-draw` `gn:motion-hierarchy` `hf:dynamic-grid` |
-| `bauhaus-geometric` 包豪斯几何 | 原色圆、方、三角，几何构成 | 形状组合拼成意象、旋转咬合 | 抽象概念、结构关系 | `gn:shape-split-merge` `gn:piece-assembly` `gn:shape-built-letters` |
+| `bauhaus-geometric` 包豪斯几何 **有参考片** | 原色圆、方、三角，几何构成 | 形状组合拼成意象、旋转咬合 | 抽象概念、结构关系 | `gn:shape-split-merge` `gn:piece-assembly` `gn:shape-built-letters`；`mg15:09-bauhaus` |
+| `line-art` 一笔画线条 **有参考片** | 单色或双色等宽细线、大量留白 | 线条自我描出并转折成下一个图形，上一形的尾线即下一形的起线；描完轮廓再由锚点铺满色面 | 品牌片、概念串联、logo 落版 | `mg15:02-line-art` `gn:line-draw` `hf:svg-stroke-trace` |
+| `morph` 形变叙事 **有参考片** | 少量纯色图形、色场 | 一个图形连续变成另一个（手机变定位钉），复杂形先收成圆或胶囊再展开，形变中带挤压与轻转 | 概念转换、因果串联、品牌意象 | `mg15:08-morph` `gn:shape-morph`；路径插值用 flubber 或 MorphSVG |
 | `memphis` 孟菲斯 | 撞色、波浪线、点阵、几何碎片 | 弹跳、抖动、贴纸弹出 | 轻松话题、年轻向、生活方式 | `gn:jello` `gn:wobble` `hf:spring-pop` |
 | `risograph` 孔版印刷 | 有限套色、套印错位、颗粒 | 图层错位抖动、颗粒闪动 | 文艺、独立品牌、读书 | 多色图层 + 混合模式；`gn:animated-dither` `gn:halftone-motion` |
 | `halftone-comic` 美漫网点 | 网点阴影、粗描边、分格、拟声字 | 分格推进、拟声字爆出、速度线 | 故事化讲述、反转、娱乐 | `hf:halftone-field` `hf:halftone-dissolve` `gn:radial-speed-lines` |
@@ -59,21 +62,22 @@
 
 | key | 观感 | 标志动作 | 适合内容 | 实现与素材 |
 |---|---|---|---|---|
-| `hand-drawn` 手绘线条 | 线条手绘、轻微抖动 | 笔触每秒变 12 次、镜头逐帧平滑 | 故事、经验分享 | p5.brush 或 SVG 描边；`gn:line-boil` `hf:hw-boil` |
+| `hand-drawn` 手绘线条 / 线条沸腾 **有参考片** | 线条手绘、轻微抖动 | 笔触每秒变 12 次、镜头逐帧平滑 | 故事、经验分享 | p5.brush 或 SVG 描边；`gn:line-boil` `hf:hw-boil`；`mg15:05-cel-boil` |
 | `watercolor-storybook` 水彩绘本 | 水彩晕染、纸纹、柔和笔触 | 笔刷铺色、角色轻动、翻页 | 故事、情感、童趣 | p5.brush、ClaudeAnimationBase；`gn:page-turn` `gn:popup-book`；渲染慢 |
 | `paper-craft` 纸艺定格 | 纸片、撕边、投影、定格抖动 | 纸片按 8–12fps 定格移动、撕纸转场 | 手作感科普、生活 | `hf:stop-motion-cadence` `gn:paper-crumple` `gn:perforated-tear` `gn:papercut-placement` |
-| `flat-vector` 扁平矢量 | 实色填充、风格化的手、扁平界面 | 形状轻微回弹 | 金融科技、App 宣传 | SVG；`gn:spring-overshoot`；Open Peeps |
+| `flat-vector` 扁平矢量 **有参考片** | 实色填充、风格化的手、扁平界面 | 形状轻微回弹 | 金融科技、App 宣传 | SVG；`gn:spring-overshoot`；Open Peeps；`mg15:01-flat-vector` |
 | `sticker-pop` 贴纸照片 | 浅底与品牌色块交替、照片抠图、贴纸 | 抠图弹出、色块随节拍切换 | 种草、消费、电商 | `hf:badge-pop` `hf:spring-pop` `gn:scale-pop`；照片 **需素材** |
-| `collage` 拼贴综艺 | 抠图贴纸、胶带、分屏、花字 | 贴纸活泼回弹，元素随节拍换 | 轻综艺、生活、反差 | HTML/CSS + 抠图；花字与原话字幕样式区分 |
+| `collage` 拼贴剪贴 **有参考片** | 老照片与报纸剪影加白边、半调网点、纸纹、比例失衡的超现实拼装 | 肩肘下颌分段转动、嘴巴换帧开合、主体按 12fps 定格并轻微手抖，"手拍上来"或翻纸转场 | 文化评论、音乐、潮流、脑洞话题 | 照片 **需素材**（CC0 / 公有领域，去背后加白边）；`mg15:06-collage` `gn:papercut-placement` |
+| `variety-caption` 综艺花字 **有参考片** | 多层描边的胖圆体字、撞色加白边与投影、爆炸框汗滴闪光等手绘符号 | 弹性弹出（约 8 帧冲过再回落），比说话晚 2–3 帧出现，驻留时轻微摆动；情绪决定字形与符号 | vlog、萌宠、访谈、轻综艺；叠在人物画面上 | `mg15:18-hanazi` `hf:badge-pop` `hf:spring-pop`；花字与原话字幕样式区分（见 [综艺包装层](production-profile.md#4-综艺包装层)） |
 
 ## F. 复古年代
 
 | key | 观感 | 标志动作 | 适合内容 | 实现与素材 |
 |---|---|---|---|---|
-| `pixel` 像素复古 | 小画布整数倍放大、关闭平滑 | 姿势按 8–12fps 量化，特效逐帧动 | 游戏、怀旧、科技史 | Canvas 2D；`gn:stepped-motion` |
+| `pixel` 像素复古 **有参考片** | 小画布整数倍放大、关闭平滑 | 姿势按 8–12fps 量化，特效逐帧动 | 游戏、怀旧、科技史 | Canvas 2D；`gn:stepped-motion`；`mg15:20-pixel` |
 | `crt-film` 老电视 / 胶片 | 扫描线、弧面、荧光点、颗粒、光晕 | 作为质感层叠在其他风格上 | 回忆、年代感 | WebGL 质感层；`gn:crt-scanlines` `gn:film-grain` `gn:vhs-tracking` |
 | `retro-analog` 模拟复古 | 褪色、颗粒、70–90 年代几何字体 | 可控故障、粗推、定格 | 怀旧、音乐、娱乐 | `gn:gate-weave` `gn:film-grain` `hf:grain-overlay` |
-| `vaporwave-y2k` 蒸汽波 / Y2K | 粉紫渐变、铬金属字、网格地平线、旧系统窗口 | 网格滚动、铬字旋转 | 互联网文化、潮流 | `gn:perspective-grid-drift` `hf:liquid-metal` `gn:liquid-metal` |
+| `vaporwave-y2k` 蒸汽波 / Synthwave / Y2K **有参考片** | 粉紫渐变、铬金属字、网格地平线、旧系统窗口 | 网格滚动、铬字旋转 | 互联网文化、潮流 | `gn:perspective-grid-drift` `hf:liquid-metal` `gn:liquid-metal`；`mg15:10-synthwave` |
 
 ## G. 科技与氛围
 
@@ -81,7 +85,8 @@
 |---|---|---|---|---|
 | `cinematic-dark` 电影暗调 | 近黑渐变、粒子、辉光只给物体 | 推入穿越、镜头前的光 | 发布、AI、游戏 | `hf:cinematic-zoom` `hf:godrays` `gn:atmospheric-depth` |
 | `grainy-gradient` 颗粒渐变 | 深底、饱和发光形状、细颗粒 | 层层打开、镜头穿过形状 | AI、科技品牌、音乐 | `hf:mesh-gradient` `hf:flowing-gradient` `gn:mesh-gradient-flow` |
-| `cyber-hud` 赛博 HUD | 深色、青与品红、扫描线、数据面板 | 扫描、解码、故障 | 科技、安全、游戏 | `hf:telemetry-hud` `hf:camcorder-hud` `hf:matrix-decode` `gn:glitch-scan-band` |
+| `cyber-hud` 赛博 HUD **有参考片** | 深色、青与品红、扫描线、数据面板 | 扫描、解码、故障 | 科技、安全、游戏 | `hf:telemetry-hud` `hf:camcorder-hud` `hf:matrix-decode` `gn:glitch-scan-band`；`mg15:22-hud` |
+| `liquid` 液态流动 **有参考片** | 有机曲面、高光、颜料或液体质感 | 液滴融合拉丝再断开回弹，波浪前沿扫过换场，次级液滴迟 2–3 帧跟随 | 开场、转场包装、饮品与潮流、情绪高点 | `mg15:07-liquid` `gn:fluid-ink` `hf:vfx-liquid-background`；WebGL 着色器 |
 | `neon` 霓虹 | 黑底霓虹灯管字、辉光 | 闪烁点亮 | 夜生活、娱乐、潮流 | `gn:neon-sign-flicker` `hf:caption-neon-glow` `hf:lt-neon-border` |
 | `luxury-dark` 奢华暗金 | 黑配金铜、柔和阴影、高挑衬线 | 慢动作、扫光、纵深 | 高端产品、品牌 | `gn:light-sweep` `hf:gloss-sweep` `hf:light-sweep-pass` |
 | `pastel-playful` 糖果童趣 | 叠加粉彩、大圆形、圆体粗字 | 弹性回弹、形状绽放 | 亲子、健康、生活方式 | `gn:squash-stretch` `gn:bounce-landing` `hf:spring-pop` |
@@ -100,6 +105,7 @@
 | key | 观感 | 标志动作 | 适合内容 | 实现与素材 |
 |---|---|---|---|---|
 | `3d-scene` 三维场景 | 代码几何、材质、灯光 | 镜头真实推拉环绕，主体占画面三分之一以上 | 产品展示、空间结构、宏大开场 | Three.js；`gn:camera-orbit` `gn:object-turntable`；写实产品需模型文件 |
+| `soft-3d` 3D 渲染质感 **有参考片** | 软胶、玻璃、金属等真实材质，棚拍布光，浅景深，糖果色 | 克隆阵列群体波动、软体碰撞，长尾缓动（前 20% 走完 80% 路程），24fps 电影感 | 产品展示、品牌开场、片头 | `mg15:04-3d-render`；Blender 命令行渲染序列帧，**需安装 Blender**（新依赖先取得同意） |
 | `low-poly-voxel` 低多边形 / 体素 | 小镇、方块世界、平涂明暗 | 搭建、绕转 | 游戏、世界观、过程 | Three.js；`gn:depth-assemble` |
 | `exploded-diagram` 爆炸拆解 | 部件分离悬浮、引线标注 | 分离 → 标注 → 合拢 | 产品结构、硬件 | `gn:exploded-assembly` `gn:layer-separation` |
 

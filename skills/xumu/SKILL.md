@@ -2,7 +2,7 @@
 name: xumu
 description: 序幕（口播成片助手）：把口播视频、录音或文案做成解说视频。先定平台、内容、风格与时长，再剪辑旁白，按内容从 Video Shotcraft 选镜头、从手法库调用学过的手法，按风格选绘制技术（SVG、Canvas、WebGL、Three.js、p5、Manim、人物抠像等）制作 B-roll 与 MG，最后合成验收。支持短篇与章节式长片。也用于学习用户发来的剪辑视频、风格案例或教程，归纳成手法卡入库。用于成片、B-roll/动效设计、动态包装或学习剪辑手法；只转录、润色文案或选题研究时不走完整流程。
 metadata:
-  version: "0.6.1"
+  version: "0.7.0"
 ---
 
 # 序幕
@@ -46,7 +46,7 @@ metadata:
 
 1. **内容 → 路线**：读 [内容到画面](references/directing.md)，逐段判断保留人物、真实素材、Shotcraft 镜头、定制 MG、插画、外部生成或 3D。
    需要动态呈现的段落，按 [解说语法](references/explainer-grammar.md) 标出句子作用（定义、对比、步骤、数据……），得到画面组织方式和现成组件候选（`motion_index.py search`）。
-2. **风格 → 技术**：读 [风格与技术栈](references/style-stack.md) 和 [风格目录](references/style-catalog.md)（54 种画面风格），把定位里的风格落成全片主风格、本片避开清单，以及每个动态段落的绘制技术与渲染引擎。插画、图标、字体、图片按 [素材来源](references/asset-sources.md) 选用并记录许可。有模板的风格（如 [白板一镜到底](references/whiteboard-world.md)）直接从 `assets/templates/` 起步。用户没指定风格时，给 2–3 个画面语言拉开差别的风格方向，各配一张代表帧供挑选。决策分工：画面风格由用户确认；绘制技术与渲染引擎由总控决定，在方案里写一句理由即可，用户点名时按用户的来（细则见 style-stack 第 3 节）。
+2. **风格 → 技术**：读 [风格与技术栈](references/style-stack.md) 和 [风格目录](references/style-catalog.md)（60 种画面风格，其中 15 种附参考成片与标志特征），把定位里的风格落成全片主风格、本片避开清单，以及每个动态段落的绘制技术与渲染引擎。插画、图标、字体、图片按 [素材来源](references/asset-sources.md) 选用并记录许可。有模板的风格（如 [白板一镜到底](references/whiteboard-world.md)）直接从 `assets/templates/` 起步。用户没指定风格时，给 2–3 个画面语言拉开差别的风格方向，各配一张代表帧供挑选。决策分工：画面风格由用户确认；绘制技术与渲染引擎由总控决定，在方案里写一句理由即可，用户点名时按用户的来（细则见 style-stack 第 3 节）。
 3. **手法卡检索**：按段落内容特征和主风格检索已入库的手法卡（见 [学习模式](references/learning.md#制作时调用)），合适的写进选择表。
 4. **镜头比较**：动态段落按 [Shotcraft 选镜头](references/shotcraft-direction.md) 比较首选与备选，再决定配方适配、配方加定制图解或纯定制 MG。定制缺口成立后读 [定制 MG 灵感与需求写法](references/mg-prompt-patterns.md)，从精选灵感索引按用途入围、看样片，再写本镜 brief；灵感库在比较 Shotcraft 之后才查。
 5. **整片节奏**：排出信息递进、动作强弱、人物回归与阅读停留，写成完整分镜。用代表帧确认风格，用短测确认动作。
@@ -72,8 +72,8 @@ metadata:
 | 序幕总控 | 内容判断、授权、风格统一、唯一时间线 |
 | Video Use | 视频输入的转录与主剪辑 |
 | Video Shotcraft | 动态段落的镜头候选、动作配方、整片编排方法 |
-| 风格技术栈 | SVG / Canvas / WebGL / Three.js / p5 / Manim / 抠像等绘制手法；54 种风格目录 |
-| 解说语法与动效参考库 | 句子作用 → 画面组织；gongnyang 637 张动效卡、HyperFrames 组件库（本机只读，`motion_index.py` 检索） |
+| 风格技术栈 | SVG / Canvas / WebGL / Three.js / p5 / Manim / 抠像等绘制手法；60 种风格目录 |
+| 解说语法与动效参考库 | 句子作用 → 画面组织；gongnyang 637 张动效卡、HyperFrames 组件库、mg-styles-15 的 15 支风格参考片（本机只读，`motion_index.py` 检索） |
 | 手法库 | 从用户发来的案例中学到的剪辑、动效、风格手法 |
 | Remotion · HyperFrames · HTML 逐帧 · Manim | 渲染引擎；HyperFrames 另可按需提供背后字幕、效果库条目、配乐音效 |
 | FFmpeg | 抠像、合成、混音、编码 |
@@ -105,7 +105,7 @@ python <skill>/scripts/voice_edit.py cues <edit>/edl_voice.json --transcripts <e
 python <skill>/scripts/cue.py --edit <edit> resolve '{"cue": "跟地图", "section": "B09", "offset": 2.4}'
 python <skill>/scripts/cue.py --edit <edit> sync <edit>/visual-plan.json --out <edit>/visual-plan.r2.json --revision r2
 python <skill>/scripts/media_tools.py clips | cutpoint | level | measure | normalize | fontcheck ...
-python <skill>/scripts/motion_index.py search 对比 | show gn:split-compare | build --force
+python <skill>/scripts/motion_index.py search 对比 | show gn:split-compare | show mg15:19-paperclip | build --force
 ```
 
 手法库工具（用法见 [学习模式](references/learning.md)）：
