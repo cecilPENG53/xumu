@@ -7,7 +7,7 @@
 
 ![GitHub stars](https://img.shields.io/github/stars/cecilPENG53/xumu?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.7.0-orange?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.7.1-orange?style=flat-square)
 ![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
 ![Remotion](https://img.shields.io/badge/Remotion-MG-0B84F3?style=flat-square)
 ![Claude](https://img.shields.io/badge/Claude-支持-D97757?style=flat-square)
@@ -124,6 +124,7 @@ flowchart LR
 4. **授权不越界**：发布、克隆声音、上传素材、付费生成都需要你单独同意；API Key 只放环境变量，不写进计划和日志。
 5. **音频自备授权**：本仓库**不包含**任何第三方音乐/音效文件。
 6. **验收看真实渲染**：`plan_tools.py check` 通过只代表结构正确，不代表成片质量通过；转录对得上也不代表口播听起来顺，没试听过的声音标为「待试听确认」。
+7. **交付不降规格**：正式交付前跑 `media_tools.py deliver-check`，成片分辨率不得低于原素材（竖屏 1080×1920 起），不通过不交付；草稿/预览渲染文件名带「草稿/预览」字样，不当成片交付。
 
 ## 平台支持
 
@@ -229,7 +230,7 @@ xumu/
 | `visual-plan.json` | **唯一主时间线**：帧级时序与镜头 |
 | `assets.json` | 素材来源与授权 |
 | `shots/<shot_id>/` | 每个镜头独立目录；定制 MG 附 `brief.md` |
-| `verify/` | 验收证据；`verify/listen/` 是剪点与疑似卡壳处的试听合集 |
+| `verify/` | 验收证据；`verify/listen/` 是剪点与疑似卡壳处的试听合集；`verify/deliver_check.json` 是成片对照原素材的交付规格报告 |
 
 ## 许可证与致谢
 
