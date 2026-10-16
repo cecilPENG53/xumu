@@ -2,6 +2,10 @@
 
 本仓库整合了以下第三方开源项目。它们的源码与原始许可证文件完整保留在各自目录中，仅做了与本技能包分发相关的最小适配（本机路径发现、分发提示）。
 
+对上游内容的其他改动：
+
+- `skills/video-use/SKILL.md`（v0.7.1）：Helpers 一节原写 `--preview` 为 720p，与同目录 `helpers/render.py` 的实际行为不符（`--preview` 为 1080p CRF 22，`--draft` 为 720p CRF 28），按代码更正了这一句文档；代码未改。
+
 | 目录 | 上游项目 | 许可证 | 许可证文件 |
 |---|---|---|---|
 | `skills/video-use/` | [browser-use/video-use](https://github.com/browser-use/video-use) | MIT，Copyright (c) 2026 Browser Use | [LICENSE](./skills/video-use/LICENSE) |

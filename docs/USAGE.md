@@ -136,6 +136,7 @@ $env:ELEVENLABS_API_KEY = "你的key"        # Windows PowerShell
 2. 必须看**真实渲染**：镜头内容、语义同步、字幕、人声、画面接缝。
 3. 计划、样片、「仅通过编译」都**不能称作最终成片**。
 4. 转录文字对得上、响度合规，**不等于听起来顺**。Agent 没有实际听过时，会写「待试听确认」，不会写「已修顺」。
+5. 成片分辨率、方向不得低于原素材或约定规格（竖屏 1080×1920 起）：正式交付前跑 `deliver-check`，报告写进 `verify/`，不通过不交付。草稿/预览渲染（如 720p 草稿）文件名带「草稿/预览」字样，不当成片交付。
 
 手动检查命令：
 
@@ -143,6 +144,7 @@ $env:ELEVENLABS_API_KEY = "你的key"        # Windows PowerShell
 python skills/xumu/scripts/plan_tools.py check edit/visual-plan.json
 python skills/xumu/scripts/plan_tools.py check edit/visual-plan.json --ready
 python skills/xumu/scripts/plan_tools.py export edit/visual-plan.json --out edit/render-manifest.json
+python skills/xumu/scripts/media_tools.py deliver-check <成片> --source <原素材> --report edit/verify/deliver_check.json
 ```
 
 ---

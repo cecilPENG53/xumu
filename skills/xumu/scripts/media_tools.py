@@ -8,6 +8,9 @@
   measure    integrated loudness / true peak of a file, optionally per time range
   normalize  two-pass loudnorm of the final mix (video stream copied)
   fontcheck  characters used by the page/text files that the font cannot draw; optional woff2 subset
+  deliver-check  probe the deliverable against the source footage or a delivery spec before handing it over:
+             fails on a smaller frame, a changed orientation, a draft/preview file name or a missing audio track;
+             warns on HDR left without tone mapping, a lower frame rate, fewer audio channels or a starved bitrate
 
 clips spec (JSON):
   {"defaults": {"size": "1920x1080", "fps": 30, "gop": 15, "crop": null},
@@ -249,6 +252,112 @@ def fontcheck(font, files, subset_out, force):
     return result
 
 
+# ------------------------------------------------------------------------------------------------ delivery
+HDR_TRANSFERS = {'smpte2084', 'arib-std-b67'}
+DRAFT_MARKERS = ('草稿', '预览', 'draft', 'preview')
+MIN_BITS_PER_PIXEL = 0.04  # H.264 below this per pixel per frame shows blocking on phone screens
+
+
+def probe_media(path):
+    out = run(['ffprobe', '-v', 'error', '-show_streams', '-show_format', '-of', 'json', str(path)], capture=True)
+    return json.loads(out.stdout)
+
+
+def frame_rate(value):
+    if not value or value in ('0/0', 'N/A'):
+        return None
+    num, _, den = str(value).partition('/')
+    rate = float(num) / float(den or 1)
+    return round(rate, 3) if rate > 0 else None
+
+
+def as_number(value, kind=float):
+    try:
+        return kind(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def rotation(stream):
+    for item in stream.get('side_data_list') or []:
+        if 'rotation' in item:
+            return int(as_number(item['rotation']) or 0)
+    return int(as_number((stream.get('tags') or {}).get('rotate')) or 0)
+
+
+def media_facts(info):
+    """Displayed size (rotation applied), fps, bitrate, duration, transfer and audio channels of a probe result."""
+    streams = info.get('streams') or []
+    video = next((s for s in streams if s.get('codec_type') == 'video'
+                  and not (s.get('disposition') or {}).get('attached_pic')), None)
+    audio = next((s for s in streams if s.get('codec_type') == 'audio'), None)
+    fmt = info.get('format') or {}
+    if video is None:
+        raise ValueError(f'no video stream in {fmt.get("filename", "file")}')
+    width, height = int(video['width']), int(video['height'])
+    if abs(rotation(video)) % 180 == 90:
+        width, height = height, width
+    fps = frame_rate(video.get('avg_frame_rate')) or frame_rate(video.get('r_frame_rate'))
+    bitrate = as_number(video.get('bit_rate'), int) or as_number(fmt.get('bit_rate'), int)
+    duration = as_number(fmt.get('duration')) or as_number(video.get('duration'))
+    return {'width': width, 'height': height, 'fps': fps,
+            'bitrate_mbps': round(bitrate / 1e6, 2) if bitrate else None,
+            'duration_s': round(duration, 3) if duration else None,
+            'color_transfer': video.get('color_transfer'), 'pix_fmt': video.get('pix_fmt'),
+            'codec': video.get('codec_name'),
+            'audio_channels': int(audio['channels']) if audio and audio.get('channels') else 0}
+
+
+def parse_size(text):
+    match = re.fullmatch(r'\s*(\d+)\s*[x×X*]\s*(\d+)\s*', text or '')
+    if not match:
+        raise ValueError(f'size must look like 1080x1920, got {text!r}')
+    return int(match.group(1)), int(match.group(2))
+
+
+def deliver_check(final, source=None, spec=None, probe=None):
+    """Compare the deliverable with the source footage (the default spec) or an explicit WxH spec."""
+    probe = probe or probe_media
+    if not source and not spec:
+        raise ValueError('pass --source (the original footage) or --spec WxH')
+    out = media_facts(probe(final))
+    src = media_facts(probe(source)) if source else None
+    need = parse_size(spec) if spec else (src['width'], src['height'])
+    errors, warnings = [], []
+
+    name = Path(final).name.lower()
+    marker = next((m for m in DRAFT_MARKERS if m in name), None)
+    if marker:
+        errors.append(f'file name marks a draft/preview render ("{marker}"); render the final instead of shipping it')
+    if need[0] != need[1] and (need[0] > need[1]) != (out['width'] > out['height']):
+        errors.append(f'orientation changed: deliverable {out["width"]}x{out["height"]}, '
+                      f'required {need[0]}x{need[1]}')
+    elif min(out['width'], out['height']) < min(need) or max(out['width'], out['height']) < max(need):
+        errors.append(f'resolution dropped: deliverable {out["width"]}x{out["height"]}, required at least '
+                      f'{need[0]}x{need[1]} ({"spec" if spec else "source"})')
+    if out['audio_channels'] == 0:
+        errors.append('deliverable has no audio track')
+    if out['fps'] and out['bitrate_mbps']:
+        bpp = out['bitrate_mbps'] * 1e6 / (out['width'] * out['height'] * out['fps'])
+        if bpp < MIN_BITS_PER_PIXEL:
+            warnings.append(f'video bitrate {out["bitrate_mbps"]} Mbps is {bpp:.3f} bits/pixel/frame '
+                            f'(< {MIN_BITS_PER_PIXEL}): looks like a draft-grade encode')
+    if src:
+        if src['color_transfer'] in HDR_TRANSFERS and out['color_transfer'] in HDR_TRANSFERS:
+            warnings.append(f'source is HDR ({src["color_transfer"]}) and the deliverable is still tagged '
+                            f'{out["color_transfer"]}: tone-map to BT.709 SDR unless HDR delivery was agreed')
+        if src['fps'] and out['fps'] and out['fps'] < src['fps'] - 0.5:
+            warnings.append(f'frame rate dropped: {src["fps"]} -> {out["fps"]} fps')
+        if out['audio_channels'] and out['audio_channels'] < src['audio_channels']:
+            warnings.append(f'audio channels dropped: {src["audio_channels"]} -> {out["audio_channels"]}')
+        if src['duration_s'] and out['duration_s'] and out['duration_s'] < src['duration_s']:
+            warnings.append(f'duration {out["duration_s"]} s vs source {src["duration_s"]} s: '
+                            'confirm the difference is the agreed edit, not a truncated render')
+    return {'ok': not errors, 'deliverable': {'file': str(final), **out},
+            'source': {'file': str(source), **src} if src else None,
+            'required_size': f'{need[0]}x{need[1]}', 'errors': errors, 'warnings': warnings}
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--force', action='store_true', help='replace existing outputs')
@@ -283,6 +392,11 @@ def main(argv=None):
     p.add_argument('--font', type=Path, required=True)
     p.add_argument('files', nargs='+', type=Path)
     p.add_argument('--subset', type=Path, help='write a woff2 subset of the used characters')
+    p = sub.add_parser('deliver-check')
+    p.add_argument('deliverable', type=Path)
+    p.add_argument('--source', type=Path, help='original footage; its size is the default delivery spec')
+    p.add_argument('--spec', help='delivery size WxH, e.g. 1080x1920 (overrides the source size)')
+    p.add_argument('--report', type=Path, help='also write the JSON report here, e.g. verify/deliver_check.json')
     args = parser.parse_args(argv)
     try:
         if args.command == 'clips':
@@ -304,6 +418,16 @@ def main(argv=None):
             result = measure(args.media, args.ranges)
         elif args.command == 'normalize':
             result = normalize(args.src, args.dst, args.target, args.tp, args.lra, args.force)
+        elif args.command == 'deliver-check':
+            if args.report:
+                guard(args.report, args.force)
+            report = deliver_check(args.deliverable, args.source, args.spec)
+            text = json.dumps(report, ensure_ascii=False, indent=2)
+            if args.report:
+                args.report.parent.mkdir(parents=True, exist_ok=True)
+                args.report.write_text(text + '\n', encoding='utf-8')
+            print(text)
+            return 0 if report['ok'] else 1
         else:
             result = fontcheck(args.font, args.files, args.subset, args.force)
             if result['missing']:
