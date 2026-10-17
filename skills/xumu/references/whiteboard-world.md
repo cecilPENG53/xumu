@@ -1,6 +1,6 @@
 # 白板一镜到底（whiteboard-world）
 
-风格目录中 `whiteboard-world` 的完整做法与模板。来源是《一人公司介绍》7 分 41 秒成片（HyperFrames 0.8.81，1920×1080）。模板在 `assets/templates/whiteboard-world/`：
+风格目录中 `whiteboard-world` 的完整做法与模板。来源是《一人公司介绍》7 分 41 秒成片（HyperFrames 0.8.81，1920×1080；模板演示在 0.8.166 回归验证一致）。模板在 `assets/templates/whiteboard-world/`：
 
 | 文件 | 作用 |
 |---|---|
