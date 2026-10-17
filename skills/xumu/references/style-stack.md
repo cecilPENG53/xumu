@@ -30,7 +30,7 @@
 
 | 引擎 | 实测状态 | 何时选 | 要点 |
 |---|---|---|---|
-| HyperFrames | **已在整片中验证**：7 分 41 秒教程片，白板一镜到底 + 真实录屏 + 圆形人像 + 视频卡片开场（HyperFrames 0.8.81） | 白板/手绘世界镜头、大量视频层叠加、用 Python 生成 HTML 合成工程、GSAP 时间轴式动效 | HTML + GSAP 时间轴，按时间 seek 渲染；坑与工作流见 [制作路线与合成](production.md#hyperframes) |
+| HyperFrames | **已在整片中验证**：7 分 41 秒教程片，白板一镜到底 + 真实录屏 + 圆形人像 + 视频卡片开场（HyperFrames 0.8.81；0.8.166 回归验证一致） | 白板/手绘世界镜头、大量视频层叠加、用 Python 生成 HTML 合成工程、GSAP 时间轴式动效 | HTML + GSAP 时间轴，按时间 seek 渲染；坑与工作流见 [制作路线与合成](production.md#hyperframes) |
 | Remotion | 文档与插件就绪，尚未在序幕整片中验证 | 镜头以 Shotcraft 配方为主（其参考实现是 Remotion TSX）、React 组件化场景、需要 `@remotion/three` | 一切由 `useCurrentFrame()` 驱动；Canvas/WebGL 在组件内按帧重绘；首次用于整片时先做代表段试渲染 |
 | HTML 逐帧 | 未在序幕中验证；mg-styles-15 的 15 支参考片用同一路线做成 | 单个独立动效段，或直接复用网页代码（含 `mg15:` 参考片源码） | 页面暴露 `window.seek(t)`（字体、图片、视频帧就绪后才返回），项目内 Playwright 脚本按帧截图，FFmpeg 编码；参考实现见第 10 节 |
 | Manim | 未验证 | 数学推导段 | 用 Manim 命令出片，再进入合成 |

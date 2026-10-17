@@ -104,11 +104,16 @@ Video Use 负责转录；剪辑点、拼接与时间表由 `voice_edit.py` 完�
 
 白板一镜到底的完整模板与做法见 [白板一镜到底](whiteboard-world.md)。
 
-以下来自 HyperFrames 0.8.81 整片实测。动手前仍先加载当前会话的 hyperframes Skill，以其规范为准。
+以下来自 HyperFrames 0.8.81 整片实测，并在 0.8.166 上回归验证一致（2026-10-17）。动手前仍先加载当前会话的 hyperframes Skill，以其规范为准。
+
+**版本与升级**
+- 当前验证版本：**0.8.166**。新项目在 `package.json` 和命令里锁定这个版本（`npx --yes hyperframes@0.8.166 check` / `render`）；已有项目保持自己锁定的版本，不随升级改动，重渲结果才可复现。
+- 约每月一次受控升级：`hf_upgrade_check.py --work <空目录>` 用当前验证版本与 npm 最新版各渲染一遍白板模板演示，比较 `check`、时长、帧率、音轨和逐帧 SSIM，并把差异最大的帧左右并排存图。结论为 pass 时，把本节的验证版本、`hf_upgrade_check.py` 的 `DEFAULT_OLD` 与模板注释改成新版本，再刷新组件索引（`motion_index.py fetch` 后 `build --force`）；结论为 review 时先看报告与并排图，不升级。
+- HyperFrames 的 Skill（使用说明）随宿主应用的插件更新，可能比这里锁定的命令行版本新。两者不一致时以锁定版本的实际能力为准：用到说明里的新命令或新属性前，先用 `npx --yes hyperframes@<锁定版本> <命令> --help` 或一次 `check` 确认存在。
 
 **工作流**
 - 用项目脚本（Python 等）生成合成工程（`index.html` + 素材），镜头计划写在生成脚本里，时间全部通过 `from cue import Timing` 解析（`sys.path` 加入 `<skill>/scripts`）。
-- 项目 `package.json` 锁定版本（如 `npx --yes hyperframes@0.8.81 check` / `render`）。插件自带的 `plugin-cli.mjs` 位于已加载 hyperframes Skill 的 `scripts/` 下，提供 `check`、`snapshot`、`render`；该目录随会话变化，按当次加载路径调用。
+- 项目 `package.json` 锁定版本（见上方"版本与升级"）。插件自带的 `plugin-cli.mjs` 位于已加载 hyperframes Skill 的 `scripts/` 下，提供 `check`、`snapshot`、`render`；该目录随会话变化，按当次加载路径调用。
 - 每次修改：`check` 结构检查 → `snapshot --at <时刻列表>` 截关键时间点 → 确认后再整片 `render`。整片渲染耗时约等于片长（7.6 分钟片约 7 分钟），长片渲染前告知用户。
 - 合成画布（根元素的 `data-width` / `data-height`）默认等于交付尺寸，即原素材尺寸，竖屏口播为 1080×1920、横屏为 1920×1080；不得为了提速调小画布，也不要在渲染参数里降分辨率，否则成片会被整体降成 720p 之类的低清版本。生成脚本把画布尺寸写成一个常量，与 `visual-plan.json` 的 `width`/`height` 一致。
 - 没有"只渲染一段"的参数：出参考片时，让生成脚本把总时长截短（如环境变量 `PREVIEW_END`），分辨率保持不变；截短的参考片文件名带"预览"字样。

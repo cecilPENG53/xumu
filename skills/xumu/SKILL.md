@@ -2,7 +2,7 @@
 name: xumu
 description: 序幕（口播成片助手）：把口播视频、录音或文案做成解说视频。先定平台、内容、风格与时长，再剪辑旁白，按内容从 Video Shotcraft 选镜头、从手法库调用学过的手法，按风格选绘制技术（SVG、Canvas、WebGL、Three.js、p5、Manim、人物抠像等）制作 B-roll 与 MG，最后合成验收。支持短篇与章节式长片。也用于学习用户发来的剪辑视频、风格案例或教程，归纳成手法卡入库。用于成片、B-roll/动效设计、动态包装或学习剪辑手法；只转录、润色文案或选题研究时不走完整流程。
 metadata:
-  version: "0.7.1"
+  version: "0.7.2"
 ---
 
 # 序幕
@@ -105,6 +105,7 @@ python <skill>/scripts/voice_edit.py cues <edit>/edl_voice.json --transcripts <e
 python <skill>/scripts/cue.py --edit <edit> resolve '{"cue": "跟地图", "section": "B09", "offset": 2.4}'
 python <skill>/scripts/cue.py --edit <edit> sync <edit>/visual-plan.json --out <edit>/visual-plan.r2.json --revision r2
 python <skill>/scripts/media_tools.py clips | cutpoint | level | measure | normalize | fontcheck ...
+python <skill>/scripts/hf_upgrade_check.py --work <空目录>     # 每月一次：HyperFrames 受控升级检查
 python <skill>/scripts/motion_index.py search 对比 | show gn:split-compare | show mg15:19-paperclip | build --force
 ```
 

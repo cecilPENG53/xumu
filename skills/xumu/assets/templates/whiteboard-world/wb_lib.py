@@ -1,6 +1,6 @@
 """Whiteboard-world builder for HyperFrames (1920x1080): one continuous board per world under one virtual camera.
 
-Generalized from the 一人公司介绍 film (HyperFrames 0.8.81). A project build script creates a Comp, places
+Generalized from the 一人公司介绍 film (HyperFrames 0.8.81; demo verified on 0.8.166). A project build script creates a Comp, places
 worlds, screen clips, video cards and the talking-head window, then calls finish() to write comp/index.html.
 All times are programme seconds; resolve them with cue.Timing (scripts/cue.py) instead of typing seconds.
 
@@ -454,7 +454,11 @@ class Comp:
             self.body.append(f'<audio id="voice{k}" src="{src}" data-start="{a:.3f}" data-duration="{min(b, self.total)-a:.3f}" '
                              f'data-media-start="{ms:.3f}"></audio>')
         tpl = TEMPLATE.read_text(encoding='utf-8')
-        page = (tpl.replace('%%TOTAL%%', f'{self.total:.3f}').replace('%%FONT_URL%%', self.font_url)
+        # No font file: map "WB Hand" to installed system fonts instead of requesting a missing URL (a 404 or an
+        # undeclared family both fail `hyperframes check`).
+        src = f'url("{self.font_url}")' if self.font_url else             'local("Microsoft YaHei"), local("PingFang SC"), local("Noto Sans CJK SC"), local("Arial")'
+        face = f'@font-face {{ font-family: "WB Hand"; src: {src}; font-weight: 400; }}'
+        page = (tpl.replace('%%TOTAL%%', f'{self.total:.3f}').replace('%%FONT_FACE%%', face)
                 .replace('%%BODY%%', '\n'.join(self.body)).replace('%%JS%%', '\n'.join(self.js)))
         self.comp.mkdir(parents=True, exist_ok=True)
         (self.comp / out).write_text(page, encoding='utf-8')

@@ -35,7 +35,7 @@ def build(comp_dir, font=None):
     if font:
         (comp / 'assets' / 'fonts').mkdir(parents=True, exist_ok=True)
         shutil.copy(font, comp / 'assets' / 'fonts' / Path(font).name)
-    c = Comp(comp, total=16.0, font_url=f'assets/fonts/{Path(font).name}' if font else 'assets/fonts/none.woff2')
+    c = Comp(comp, total=16.0, font_url=f'assets/fonts/{Path(font).name}' if font else None)
 
     # ---- world 1: two stations on one board, then a dive into a monitor showing the clip's first frame
     w = c.new_world()

@@ -7,7 +7,7 @@
 
 ![GitHub stars](https://img.shields.io/github/stars/cecilPENG53/xumu?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.7.1-orange?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.7.2-orange?style=flat-square)
 ![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
 ![Remotion](https://img.shields.io/badge/Remotion-MG-0B84F3?style=flat-square)
 ![Claude](https://img.shields.io/badge/Claude-支持-D97757?style=flat-square)
