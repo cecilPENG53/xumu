@@ -7,7 +7,7 @@
 
 ![GitHub stars](https://img.shields.io/github/stars/cecilPENG53/xumu?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.7.2-orange?style=flat-square)
+![Version](https://img.shields.io/badge/version-0.7.3-orange?style=flat-square)
 ![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
 ![Remotion](https://img.shields.io/badge/Remotion-MG-0B84F3?style=flat-square)
 ![Claude](https://img.shields.io/badge/Claude-Supported-D97757?style=flat-square)
@@ -24,7 +24,7 @@ It is not a one-click black box but a director workflow with confirmation points
 - **Plan before cutting** — a production profile (platform × content × style × length) drives narrative structure, edit strategy and shot intensity.
 - **Not everything becomes a card** — keeping the speaker on screen or adding no animation are valid choices; only segments that need motion get shots.
 - **Shots with provenance** — compare first choices and alternatives from 157 cinematic shot-recipe cards; write custom MG only when there is a real expressive gap.
-- **Style and explanation with method** — a 60-style catalog (15 with reference films and checkable signature features) and an explainer grammar map what a sentence does (define, compare, steps, data…) to concrete visuals and ready-made components.
+- **Style and explanation with method** — a 61-style catalog (15 with reference films and checkable signature features) and an explainer grammar map what a sentence does (define, compare, steps, data…) to concrete visuals and ready-made components.
 - **Verifiable at every step** — one master timeline, per-shot test renders, a plan checker, and review of real renders.
 
 > Distilled by **VVAI** from real talking-head video production, integrating and adapting [Video Use](https://github.com/browser-use/video-use) (MIT) and [Video Shotcraft](https://github.com/Vincentwei1021/video-shotcraft) (Apache-2.0).
@@ -86,7 +86,7 @@ A pack of **3 skills**. Normally you only start from the director entry point; i
 - ✂️ **Voice-first editing**: verbatim transcription, keep lists written as "from this sentence to that one", cut points snapped to real pauses by audio level, frame-exact splicing (audio/video within 1 frame); ElevenLabs optional, free local faster-whisper by default
 - ⏱ **Times written as "this sentence + offset"**: visual events follow the narration and shift automatically when the opening or the edit changes
 - 🎞 **Content-driven shots**: 157 Shotcraft shot-recipe cards (openings, camera moves, transitions, data, typography, rhythm…), comparing first choice and alternatives before committing
-- 🎨 **60 visual styles**: explainer, journalism, UI/product, graphic-design schools, illustration and craft, retro, tech, East Asian traditions (ink wash, paper cut, guochao), 3D, variety-show captions, sticker explainers and more, each with look, signature motion, best-fit content and ready implementations; 15 link to reference films from [mg-styles-15](https://github.com/Vincentwei1021/mg-styles-15)
+- 🎨 **61 visual styles**: explainer, journalism, UI/product, graphic-design schools, illustration and craft, retro, tech, East Asian traditions (ink wash, paper cut, guochao), 3D, variety-show captions, sticker explainers and more, each with look, signature motion, best-fit content and ready implementations; 15 link to reference films from [mg-styles-15](https://github.com/Vincentwei1021/mg-styles-15)
 - 🗣 **Explainer grammar**: 20 sentence functions mapped to visual organization, an anti-slideshow checklist and phone-readable type sizes
 - 🧩 **Whiteboard one-take template**: world-coordinate camera, drawing hand, hand-drawn monitor hand-offs into real screen recordings, circular talking head; verified in a 7-minute film (HyperFrames)
 - ✨ **Custom MG**: 32 curated inspiration entries + brief template + a **frame-deterministic rendering contract** (every frame depends only on its frame number)

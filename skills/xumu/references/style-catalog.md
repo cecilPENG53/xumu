@@ -41,6 +41,7 @@
 | `white-catalog` 白底目录 | 白色网格、产品抠图、混排字体、涂鸦 | 网格逐格填入、盖章、日期块 | 产品介绍、品牌、合集盘点 | `hf:grid-card-assemble` `hf:mk-placeholder-grid` `gn:stamp-impact` |
 | `glass-ui` 液态玻璃 / 弥散渐变 **有参考片** | 半透明玻璃卡片、柔光、模糊背景 | 卡片浮起、折射扫光 | 科技产品、苹果风界面 | `hf:vfx-liquid-glass` `hf:ios26-liquid-glass` `gn:glass-refraction`；`mg15:12-aurora-glass` |
 | `terminal-code` 终端代码 | 深色编辑器或终端、等宽字、语法高亮 | 打字、逐行高亮、diff 对比 | 编程、AI 工具、开发教程 | `hf:code-typing` `hf:code-diff` `hf:code-highlight` `hf:terminal-simulator` |
+| `mascot-ui-diorama` 吉祥物界面剧场 | 深色软件窗口做成有厚度、受光、有投影的 3D 面板，原创体素小角色站在输入框上；暗红渐变底，换场后是深蓝走廊、夜城等低多边形场景 | 角色看着字被打出、对回复做反应；慢推 → 漫画惊吓猛拉（速度线、问号）；像素块斜向铺满再同向散开换章节；常驻 HUD 记录筹码与倒计时 | AI 工具拟人化、挑战实验、无旁白剧情短片、口播里的演绎插入段 | Three.js + HTML 逐帧；`hf:grid-pixelate-wipe` `gn:radial-speed-lines` `gn:character-gaze-reaction` `gn:squash-stretch` `gn:rolling-digits`；界面为示意重绘，角色用原创或已授权形象 |
 | `brutalist-mono` 粗野等宽 | 黑白硬网格、等宽与窄体字、光标闪烁 | 硬切、方块位移、乱码解码 | 开发者、极客、冷观点 | `gn:hard-cut` `gn:hard-appearance` `hf:scramble-reveal` |
 
 ## D. 平面设计流派
